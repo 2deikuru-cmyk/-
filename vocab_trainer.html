@@ -2,332 +2,554 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vocabulary Trainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Vocab Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0f0f13;
-    color: #f0ede8;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 16px 48px;
-  }
+:root {
+  --bg: #09090f;
+  --surface: #111118;
+  --border: #1e1e2e;
+  --accent: #e8ff47;
+  --accent2: #ff6b6b;
+  --accent3: #47d9ff;
+  --text: #f0ede8;
+  --muted: #555568;
+  --success: #5cdb95;
+  --danger: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'DM Mono', monospace;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; overflow-x: hidden;
+}
+.bg-blob {
+  position: fixed; border-radius: 50%;
+  filter: blur(90px); opacity: 0.13;
+  pointer-events: none; z-index: 0;
+  animation: blobFloat 9s ease-in-out infinite alternate;
+}
+.bg-blob:nth-child(1){width:320px;height:320px;background:var(--accent);top:-90px;left:-90px;animation-delay:0s}
+.bg-blob:nth-child(2){width:260px;height:260px;background:var(--accent3);bottom:8%;right:-70px;animation-delay:-3s}
+.bg-blob:nth-child(3){width:200px;height:200px;background:var(--accent2);top:42%;left:28%;animation-delay:-5.5s}
+@keyframes blobFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(22px,28px) scale(1.12)}}
 
-  h1 {
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #666;
-    margin-bottom: 28px;
-    margin-top: 8px;
-  }
+/* ── SPLASH ── */
+#splash {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+.splash-badge {
+  font-size: 10px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 32px;
+  animation: fadeDown 0.7s ease both;
+}
+.splash-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: clamp(42px,12vw,80px);
+  line-height: 1.0; letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  animation: fadeDown 0.7s 0.1s ease both;
+}
+.splash-title span { color: var(--accent); }
+.splash-subtitle {
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 56px; line-height: 1.7;
+  animation: fadeDown 0.7s 0.2s ease both;
+}
+.lang-label {
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px;
+  animation: fadeDown 0.7s 0.3s ease both;
+}
+.lang-cards {
+  display: flex; gap: 12px; justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeDown 0.7s 0.4s ease both;
+}
+.lang-card {
+  width: 150px; padding: 24px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.lang-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 16px 40px rgba(232,255,71,0.12); }
+.lang-card:active { transform: scale(0.95); }
+.lang-flag { font-size: 40px; }
+.lang-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; }
+.lang-sub  { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
 
-  /* Set selector */
-  .sets {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    max-width: 480px;
-  }
-  .set-btn {
-    flex: 1;
-    min-width: 130px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #2a2a35;
-    background: #18181f;
-    color: #999;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.18s;
-    text-align: center;
-    line-height: 1.4;
-  }
-  .set-btn:hover { border-color: #444; color: #ddd; }
-  .set-btn.active { border-color: #7c6fff; background: #1e1b33; color: #b8b0ff; }
+/* ── APP ── */
+#app {
+  display: none; position: relative; z-index: 10;
+  min-height: 100vh; flex-direction: column;
+  align-items: center; padding: 24px 16px 60px;
+}
+.top-bar {
+  width: 100%; max-width: 480px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.app-logo {
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+}
+.back-btn {
+  font-size: 11px; color: var(--muted);
+  background: none; border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+  cursor: pointer; font-family: 'DM Mono', monospace;
+  transition: all 0.2s;
+}
+.back-btn:hover { color: var(--text); border-color: #444; }
 
-  /* Phase label */
-  .phase-label {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #555;
-    text-align: center;
-    margin-bottom: 12px;
-  }
+/* sub-sets for Georgian alphabet */
+#subsets-bar {
+  width: 100%; max-width: 480px;
+  display: none; margin-bottom: 10px;
+}
+.subsets {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.subset-btn {
+  padding: 7px 12px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--muted); font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 0.04em; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.subset-btn:active { transform: scale(0.93); }
+.subset-btn.active {
+  border-color: var(--accent3); background: rgba(71,217,255,0.07);
+  color: var(--accent3); transform: translateY(-1px);
+}
 
-  /* Progress */
-  .progress-track {
-    width: 100%;
-    max-width: 480px;
-    height: 2px;
-    background: #1e1e28;
-    border-radius: 2px;
-    margin-bottom: 24px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: #7c6fff;
-    border-radius: 2px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
+.sets-scroll {
+  width: 100%; max-width: 480px;
+  overflow-x: auto; padding-bottom: 4px; margin-bottom: 22px;
+  scrollbar-width: none;
+}
+.sets-scroll::-webkit-scrollbar { display: none; }
+.sets { display: flex; gap: 8px; white-space: nowrap; width: max-content; }
+.set-btn {
+  padding: 9px 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--muted); font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.04em; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap;
+}
+.set-btn:active { transform: scale(0.94); }
+.set-btn.active {
+  border-color: var(--accent); background: rgba(232,255,71,0.08);
+  color: var(--accent); transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232,255,71,0.1);
+}
 
-  /* Card */
-  .card {
-    width: 100%;
-    max-width: 480px;
-    background: #18181f;
-    border: 1px solid #2a2a35;
-    border-radius: 18px;
-    padding: 40px 28px;
-    text-align: center;
-    min-height: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .card-prompt {
-    font-size: 22px;
-    font-weight: 500;
-    color: #f0ede8;
-    line-height: 1.35;
-  }
-  .card-counter {
-    font-size: 12px;
-    color: #444;
-  }
+.wrapper { width: 100%; max-width: 480px; }
+.phase-label {
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted);
+  text-align: center; margin-bottom: 12px;
+}
+.progress-track {
+  height: 2px; background: var(--border); border-radius: 2px;
+  margin-bottom: 22px; overflow: visible; position: relative;
+}
+.progress-fill {
+  height: 100%; background: var(--accent); border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  width: 0%; position: relative;
+}
+.progress-fill::after {
+  content: ''; position: absolute; right: -3px; top: -3px;
+  width: 8px; height: 8px; background: var(--accent);
+  border-radius: 50%; box-shadow: 0 0 10px var(--accent);
+}
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 44px 28px; text-align: center;
+  min-height: 160px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 16px; position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(232,255,71,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.card-geo-letter {
+  font-size: 72px; line-height: 1; color: var(--accent);
+  text-shadow: 0 0 40px rgba(232,255,71,0.35);
+}
+.card-prompt {
+  font-family: 'Syne', sans-serif; font-size: 22px;
+  font-weight: 600; color: var(--text); line-height: 1.35;
+}
+.card-counter { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+.card-inner { display: contents; }
 
-  /* Input */
-  .input-row {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    max-width: 480px;
-    margin-bottom: 14px;
-  }
-  input[type="text"] {
-    flex: 1;
-    background: #18181f;
-    border: 1px solid #2a2a35;
-    border-radius: 10px;
-    color: #f0ede8;
-    font-size: 16px;
-    padding: 12px 14px;
-    outline: none;
-    transition: border-color 0.15s;
-    -webkit-appearance: none;
-  }
-  input[type="text"]:focus { border-color: #7c6fff; }
-  input[type="text"]:disabled { opacity: 0.5; }
-  .check-btn {
-    padding: 12px 20px;
-    border-radius: 10px;
-    border: 1px solid #2a2a35;
-    background: #18181f;
-    color: #f0ede8;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-  .check-btn:hover { background: #222230; border-color: #444; }
+@keyframes cardIn  { from{opacity:0;transform:translateY(16px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes cardOut { to{opacity:0;transform:translateY(-14px) scale(0.95)} }
+.card-inner.anim-in  { animation: cardIn  0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+.card-inner.anim-out { animation: cardOut 0.2s ease both; }
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+}
+.card.shake { animation: shake 0.4s ease; }
+@keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.035)} 100%{transform:scale(1)} }
+.card.pop { animation: pop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 
-  /* Feedback */
-  .feedback {
-    font-size: 15px;
-    font-weight: 500;
-    min-height: 22px;
-    text-align: center;
-  }
-  .feedback.correct { color: #5cdb95; }
-  .feedback.wrong { color: #ff6b6b; }
-  .correct-answer {
-    font-size: 14px;
-    color: #666;
-    text-align: center;
-    min-height: 20px;
-    margin-top: 4px;
-  }
-
-  /* Next btn */
-  .next-btn {
-    display: none;
-    margin-top: 14px;
-    padding: 12px 28px;
-    border-radius: 10px;
-    border: 1px solid #2a2a35;
-    background: #1e1e28;
-    color: #b8b0ff;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .next-btn:hover { background: #25253a; }
-
-  /* Stats */
-  .stats {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    margin-top: 20px;
-    font-size: 13px;
-    color: #555;
-  }
-  .stats strong { color: #888; }
-
-  /* End screen */
-  .end-screen {
-    display: none;
-    width: 100%;
-    max-width: 480px;
-    text-align: center;
-    padding: 2rem 1rem;
-  }
-  .end-screen h3 { font-size: 22px; font-weight: 500; margin-bottom: 10px; }
-  .end-screen p { font-size: 14px; color: #666; margin-bottom: 28px; line-height: 1.6; }
-  .action-btn {
-    padding: 13px 28px;
-    border-radius: 10px;
-    border: 1px solid #2a2a35;
-    background: #1e1e28;
-    color: #b8b0ff;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .action-btn:hover { background: #25253a; }
+.input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+input[type="text"] {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text);
+  font-family: 'DM Mono', monospace; font-size: 15px; padding: 13px 14px;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+input[type="text"]:focus        { border-color: var(--accent);  box-shadow: 0 0 0 3px rgba(232,255,71,0.08); }
+input[type="text"].correct-flash{ border-color: var(--success); box-shadow: 0 0 0 3px rgba(92,219,149,0.12); }
+input[type="text"].wrong-flash  { border-color: var(--danger);  box-shadow: 0 0 0 3px rgba(255,107,107,0.12); }
+input[type="text"]:disabled { opacity: 0.5; }
+.check-btn {
+  padding: 13px 18px; border-radius: 12px; border: none;
+  background: var(--accent); color: #000;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap; letter-spacing: 0.05em;
+}
+.check-btn:active { transform: scale(0.93); }
+.check-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,255,71,0.3); }
+.feedback {
+  font-size: 14px; font-weight: 500; min-height: 20px;
+  text-align: center; letter-spacing: 0.05em;
+}
+.feedback.correct { color: var(--success); animation: feedbackIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+.feedback.wrong   { color: var(--danger);  animation: feedbackIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes feedbackIn { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+.correct-answer { font-size: 13px; color: var(--muted); text-align: center; min-height: 18px; font-style: italic; }
+.next-btn {
+  display: none; margin-top: 14px; padding: 13px 28px;
+  border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  letter-spacing: 0.05em;
+}
+.next-btn:hover  { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+.next-btn:active { transform: scale(0.96); }
+.stats {
+  display: flex; gap: 20px; justify-content: center;
+  margin-top: 20px; font-size: 12px; color: var(--muted); letter-spacing: 0.08em;
+}
+.stats strong { color: #888; }
+.particle {
+  position: fixed; pointer-events: none; z-index: 999;
+  border-radius: 50%; animation: particleFly 0.85s ease-out forwards;
+}
+@keyframes particleFly {
+  0%  {opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}
+}
+.end-screen { display: none; text-align: center; padding: 2rem 1rem; }
+.end-emoji  { font-size: 56px; margin-bottom: 16px; display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes popIn { from{opacity:0;transform:scale(0.3) rotate(-15deg)} to{opacity:1;transform:scale(1) rotate(0deg)} }
+.end-screen h3 { font-family:'Syne',sans-serif; font-size:24px; font-weight:700; margin-bottom:10px; }
+.end-screen p  { font-size:13px; color:var(--muted); margin-bottom:28px; line-height:1.9; white-space:pre-line; }
+.action-btn {
+  padding: 14px 32px; border-radius: 12px;
+  border: 1px solid var(--accent); background: rgba(232,255,71,0.08); color: var(--accent);
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); letter-spacing: 0.08em;
+}
+.action-btn:hover  { background:rgba(232,255,71,0.16); transform:translateY(-2px); box-shadow:0 8px 24px rgba(232,255,71,0.15); }
+.action-btn:active { transform:scale(0.96); }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+.slide-out-left { animation: slideOutLeft 0.4s cubic-bezier(0.4,0,0.2,1) both; }
+@keyframes slideOutLeft { to{opacity:0;transform:translateX(-60px) scale(0.95)} }
+.slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.34,1.2,0.64,1) both; }
+@keyframes slideInRight { from{opacity:0;transform:translateX(60px) scale(0.96)} to{opacity:1;transform:translateX(0) scale(1)} }
 </style>
 </head>
 <body>
+<div class="bg-blob"></div>
+<div class="bg-blob"></div>
+<div class="bg-blob"></div>
 
-<h1>Vocabulary Trainer</h1>
-
-<div class="sets">
-  <button class="set-btn active" onclick="selectSet(0)">🎭 Arts &amp;<br>Performance</button>
-  <button class="set-btn" onclick="selectSet(1)">⚽ Sport</button>
-  <button class="set-btn" onclick="selectSet(2)">❄️ Adjectives<br>(Snowball)</button>
-</div>
-
-<div style="width:100%;max-width:480px;">
-  <div class="phase-label" id="phase-label">Раунд 1 — все слова</div>
-  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-
-  <div id="main">
-    <div class="card">
-      <div class="card-prompt" id="prompt">...</div>
-      <div class="card-counter" id="counter"></div>
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div class="splash-badge">✦ Изучение языков</div>
+  <h1 class="splash-title">Vocab<br><span>Trainer</span></h1>
+  <p class="splash-subtitle">Карточки. Ошибки. Повтор.<br>Пока не запомнишь.</p>
+  <div class="lang-label">Выбери язык</div>
+  <div class="lang-cards">
+    <div class="lang-card" onclick="chooseLang('en')">
+      <div class="lang-flag">🇬🇧</div>
+      <div class="lang-name">Английский</div>
+      <div class="lang-sub">3 набора · 37 слов</div>
     </div>
-    <div class="input-row">
-      <input type="text" id="answer" placeholder="Английский перевод..." autocomplete="off" autocorrect="off" spellcheck="false" />
-      <button class="check-btn" id="submit">Проверить</button>
-    </div>
-    <div class="feedback" id="feedback"></div>
-    <div class="correct-answer" id="correct-answer"></div>
-    <div style="text-align:center;">
-      <button class="next-btn" id="next-btn">Следующее →</button>
-    </div>
-    <div class="stats">
-      <span>Верно: <strong id="s-correct">0</strong></span>
-      <span>Ошибок: <strong id="s-wrong">0</strong></span>
+    <div class="lang-card" onclick="chooseLang('ka')">
+      <div class="lang-flag">🇬🇪</div>
+      <div class="lang-name">Грузинский</div>
+      <div class="lang-sub">1 набор · 33 буквы</div>
     </div>
   </div>
+</div>
 
-  <div class="end-screen" id="end-screen">
-    <h3 id="end-title"></h3>
-    <p id="end-body"></p>
-    <button class="action-btn" id="action-btn"></button>
+<!-- ── APP ── -->
+<div id="app">
+  <div class="top-bar">
+    <div class="app-logo" id="app-logo">Английский</div>
+    <button class="back-btn" onclick="goBack()">← Назад</button>
+  </div>
+
+  <div class="sets-scroll">
+    <div class="sets" id="sets-row"></div>
+  </div>
+
+  <!-- sub-sets only for Georgian alphabet -->
+  <div id="subsets-bar">
+    <div class="subsets" id="subsets-row"></div>
+  </div>
+
+  <div class="wrapper">
+    <div class="phase-label" id="phase-label">Раунд 1</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div id="main">
+      <div class="card" id="card">
+        <div class="card-inner" id="card-inner">
+          <div class="card-prompt" id="prompt">...</div>
+          <div class="card-counter" id="counter"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <input type="text" id="answer" placeholder="Введи ответ..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <button class="check-btn" id="submit">ОК</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="correct-answer" id="correct-answer"></div>
+      <div style="text-align:center">
+        <button class="next-btn" id="next-btn">Следующее →</button>
+      </div>
+      <div class="stats">
+        <span>✓ <strong id="s-correct">0</strong></span>
+        <span>✗ <strong id="s-wrong">0</strong></span>
+      </div>
+    </div>
+
+    <div class="end-screen" id="end-screen">
+      <span class="end-emoji" id="end-emoji">🎉</span>
+      <h3 id="end-title"></h3>
+      <p id="end-body"></p>
+      <button class="action-btn" id="action-btn"></button>
+    </div>
   </div>
 </div>
 
 <script>
-const SETS = [
-  {
-    name: "Arts & Performance",
-    words: [
-      { ru: "аудитория, зрители", en: ["an audience", "audience"] },
-      { ru: "хор", en: ["a choir", "choir"] },
-      { ru: "показ, демонстрация, витрина", en: ["a display", "display"] },
-      { ru: "выставка", en: ["an exhibition", "exhibition"] },
-      { ru: "галерея", en: ["a gallery", "gallery"] },
-      { ru: "инструмент", en: ["an instrument", "instrument"] },
-      { ru: "живой концерт", en: ["a live concert", "live concert"] },
-      { ru: "музыкант", en: ["a musician", "musician"] },
-      { ru: "оркестр", en: ["an orchestra", "orchestra"] },
-      { ru: "выступать вживую", en: ["to perform live", "perform live"] },
-      { ru: "представление, выступление", en: ["a performance", "performance"] },
-      { ru: "студия звукозаписи", en: ["a recording studio", "recording studio"] },
-      { ru: "репетиционный зал", en: ["a rehearsal room", "rehearsal room"] },
-      { ru: "репетировать", en: ["to rehearse", "rehearse"] },
-      { ru: "сцена (часть действия / эпизод)", en: ["a scene", "scene"] },
-      { ru: "зритель (спортивный или уличный)", en: ["a spectator", "spectator"] },
-      { ru: "сцена (подмостки)", en: ["a stage", "stage"] },
-    ]
-  },
-  {
-    name: "Sport",
-    words: [
-      { ru: "чемпион", en: ["champion", "a champion"] },
-      { ru: "тренер", en: ["coach", "a coach"] },
-      { ru: "финал", en: ["final", "a final"] },
-      { ru: "лига", en: ["league", "a league"] },
-      { ru: "зритель (спортивный / уличный)", en: ["spectator", "a spectator"] },
-      { ru: "стадион", en: ["stadium", "a stadium"] },
-      { ru: "болельщик, фанат", en: ["supporter", "a supporter"] },
-      { ru: "ведущий игрок, звезда", en: ["top player", "a top player"] },
-      { ru: "турнир", en: ["tournament", "a tournament"] },
-      { ru: "трофей, кубок", en: ["trophy", "a trophy"] },
-    ]
-  },
-  {
-    name: "Adjectives (Snowball)",
-    words: [
-      { ru: "соревновательный, конкурентный", en: ["competitive"] },
-      { ru: "огромный, массивный", en: ["massive"] },
-      { ru: "недорогой, доступный по цене", en: ["inexpensive"] },
-      { ru: "привлекательный, притягательный", en: ["attractive"] },
-      { ru: "эффективный, действенный", en: ["effective"] },
-      { ru: "решительный, твёрдый", en: ["decisive"] },
-      { ru: "творческий, креативный", en: ["creative"] },
-      { ru: "агрессивный", en: ["aggressive"] },
-      { ru: "активный, деятельный", en: ["active"] },
-      { ru: "впечатляющий, внушительный", en: ["impressive"] },
-    ]
-  }
+// ── Georgian alphabet ──
+const GEO_ALL = [
+  {q:'ა',a:['а','а (а)']},{q:'ბ',a:['б','б (ба)']},{q:'გ',a:['г','г (га)']},
+  {q:'დ',a:['д','д (да)']},{q:'ე',a:['е','е (э)']},{q:'ვ',a:['в','в (ва)']},
+  {q:'ზ',a:['з','з (за)']},{q:'თ',a:['т','т (та)']},{q:'ი',a:['и','и (и)']},
+  {q:'კ',a:['к','к (ка)']},{q:'ლ',a:['л','л (ла)']},{q:'მ',a:['м','м (ма)']},
+  {q:'ნ',a:['н','н (на)']},{q:'ო',a:['о','о (о)']},{q:'პ',a:['п','п (па)']},
+  {q:'ჟ',a:['ж','ж (жа)']},{q:'რ',a:['р','р (ра)']},{q:'ს',a:['с','с (са)']},
+  {q:'ტ',a:['т','т (та)']},{q:'უ',a:['у','у (у)']},{q:'ფ',a:['ф','ф (фа)']},
+  {q:'ქ',a:['к','к (ка)']},{q:'ღ',a:['г','г (гх)']},{q:'ყ',a:['к','к (кх)']},
+  {q:'შ',a:['ш','ш (ша)']},{q:'ჩ',a:['ч','ч (ча)']},{q:'ც',a:['ц','ц (ца)']},
+  {q:'ძ',a:['дз','дз (дза)']},{q:'წ',a:['ц','ц (тс)']},{q:'ჭ',a:['ч','ч (тч)']},
+  {q:'ხ',a:['х','х (ха)']},{q:'ჯ',a:['дж','дж (джа)']},{q:'ჰ',a:['х','х (ха)']},
 ];
+// split into 3 groups
+const GEO_P1 = GEO_ALL.slice(0, 11);   // ა–ლ
+const GEO_P2 = GEO_ALL.slice(11, 22);  // მ–ფ
+const GEO_P3 = GEO_ALL.slice(22);      // ქ–ჰ
 
-let currentSetIdx = 0;
-let queue = [], mistakes = [], phaseTotal = 0, phaseCorrect = 0, phaseWrong = 0;
+const LANG_DATA = {
+  en: {
+    name: 'Английский',
+    hasSubsets: false,
+    sets: [
+      { label: '🎭 Искусство', words: [
+        {q:'аудитория, зрители',a:['an audience','audience']},
+        {q:'хор',a:['a choir','choir']},
+        {q:'показ, витрина',a:['a display','display']},
+        {q:'выставка',a:['an exhibition','exhibition']},
+        {q:'галерея',a:['a gallery','gallery']},
+        {q:'инструмент',a:['an instrument','instrument']},
+        {q:'живой концерт',a:['a live concert','live concert']},
+        {q:'музыкант',a:['a musician','musician']},
+        {q:'оркестр',a:['an orchestra','orchestra']},
+        {q:'выступать вживую',a:['to perform live','perform live']},
+        {q:'представление, выступление',a:['a performance','performance']},
+        {q:'студия звукозаписи',a:['a recording studio','recording studio']},
+        {q:'репетиционный зал',a:['a rehearsal room','rehearsal room']},
+        {q:'репетировать',a:['to rehearse','rehearse']},
+        {q:'сцена (эпизод)',a:['a scene','scene']},
+        {q:'зритель (уличный)',a:['a spectator','spectator']},
+        {q:'сцена (подмостки)',a:['a stage','stage']},
+      ]},
+      { label: '⚽ Спорт', words: [
+        {q:'чемпион',a:['champion','a champion']},
+        {q:'тренер',a:['coach','a coach']},
+        {q:'финал',a:['final','a final']},
+        {q:'лига',a:['league','a league']},
+        {q:'зритель (спортивный)',a:['spectator','a spectator']},
+        {q:'стадион',a:['stadium','a stadium']},
+        {q:'болельщик, фанат',a:['supporter','a supporter']},
+        {q:'ведущий игрок',a:['top player','a top player']},
+        {q:'турнир',a:['tournament','a tournament']},
+        {q:'трофей, кубок',a:['trophy','a trophy']},
+      ]},
+      { label: '❄️ Прилагательные', words: [
+        {q:'соревновательный',a:['competitive']},
+        {q:'огромный, массивный',a:['massive']},
+        {q:'недорогой',a:['inexpensive']},
+        {q:'привлекательный',a:['attractive']},
+        {q:'эффективный',a:['effective']},
+        {q:'решительный',a:['decisive']},
+        {q:'творческий',a:['creative']},
+        {q:'агрессивный',a:['aggressive']},
+        {q:'активный',a:['active']},
+        {q:'впечатляющий',a:['impressive']},
+      ]},
+    ],
+    placeholder: 'Английский перевод...',
+  },
+  ka: {
+    name: 'Грузинский',
+    hasSubsets: true,
+    sets: [
+      {
+        label: '🔤 Алфавит',
+        isAlphabet: true,
+        subsets: [
+          { label: 'Часть 1  (ა–ლ)', words: GEO_P1 },
+          { label: 'Часть 2  (მ–ფ)', words: GEO_P2 },
+          { label: 'Часть 3  (ქ–ჰ)', words: GEO_P3 },
+          { label: '✦ Все 33', words: GEO_ALL },
+        ],
+      },
+    ],
+    placeholder: 'Звучание буквы...',
+  },
+};
+
+// ── State ──
+let lang = null, currentSetIdx = 0, currentSubsetIdx = 0;
+let queue = [], mistakes = [];
+let phaseTotal = 0, phaseCorrect = 0, phaseWrong = 0;
 let current = null, answered = false, phase = 1;
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+// ── Navigation ──
+function chooseLang(code) {
+  lang = LANG_DATA[code];
+  const splash = document.getElementById('splash');
+  splash.classList.add('slide-out-left');
+  setTimeout(() => {
+    splash.style.display = 'none';
+    const app = document.getElementById('app');
+    app.style.display = 'flex';
+    app.classList.add('slide-in-right');
+    buildApp();
+  }, 420);
 }
-function normalize(s) { return s.trim().toLowerCase().replace(/^(a|an|to)\s+/, ''); }
+
+function goBack() {
+  const app = document.getElementById('app');
+  app.style.opacity = '0'; app.style.transform = 'translateX(60px)';
+  app.style.transition = 'opacity 0.3s, transform 0.3s';
+  setTimeout(() => {
+    app.style.display = 'none'; app.style.opacity = '';
+    app.style.transform = ''; app.style.transition = '';
+    app.classList.remove('slide-in-right');
+    const splash = document.getElementById('splash');
+    splash.style.display = 'flex';
+    splash.classList.remove('slide-out-left');
+    splash.style.animation = 'fadeIn 0.4s ease both';
+  }, 300);
+}
+
+function buildApp() {
+  document.getElementById('app-logo').textContent = lang.name;
+  document.getElementById('answer').placeholder = lang.placeholder;
+
+  // main set buttons
+  const row = document.getElementById('sets-row');
+  row.innerHTML = '';
+  lang.sets.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'set-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = s.label;
+    btn.onclick = () => selectSet(i);
+    row.appendChild(btn);
+  });
+
+  selectSet(0);
+}
 
 function selectSet(idx) {
   currentSetIdx = idx;
-  document.querySelectorAll('.set-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.set-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+
+  const set = lang.sets[idx];
+  const subBar = document.getElementById('subsets-bar');
+
+  if (set.subsets) {
+    // build subset buttons
+    subBar.style.display = 'block';
+    const srow = document.getElementById('subsets-row');
+    srow.innerHTML = '';
+    set.subsets.forEach((sub, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'subset-btn' + (i === 0 ? ' active' : '');
+      btn.textContent = sub.label;
+      btn.onclick = () => selectSubset(i);
+      srow.appendChild(btn);
+    });
+    currentSubsetIdx = 0;
+    startGame(set.subsets[0].words, set.isAlphabet);
+  } else {
+    subBar.style.display = 'none';
+    startGame(set.words, false);
+  }
+
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('main').style.display = 'block';
-  startPhase(SETS[idx].words, 1);
+}
+
+function selectSubset(idx) {
+  currentSubsetIdx = idx;
+  document.querySelectorAll('.subset-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  const set = lang.sets[currentSetIdx];
+  document.getElementById('end-screen').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+  startGame(set.subsets[idx].words, set.isAlphabet);
+}
+
+// ── Game ──
+function shuffle(arr) {
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function normalize(s){ return s.trim().toLowerCase().replace(/^(a|an|to)\s+/,''); }
+
+function startGame(words, isAlpha) {
+  // store isAlpha on state
+  window._isAlpha = !!isAlpha;
+  startPhase(words, 1);
 }
 
 function updateStats() {
@@ -342,7 +564,8 @@ function startPhase(words, phaseNum) {
   phaseTotal = words.length;
   phaseCorrect = 0; phaseWrong = 0;
   document.getElementById('phase-label').textContent =
-    phaseNum === 1 ? 'Раунд 1 — все слова' : `Раунд ${phaseNum} — работа над ошибками`;
+    phaseNum === 1 ? 'Раунд 1 — все карточки' : `Раунд ${phaseNum} — работа над ошибками`;
+  document.getElementById('progress-fill').style.width = '0%';
   updateStats();
   nextCard();
 }
@@ -351,18 +574,43 @@ function nextCard() {
   if (queue.length === 0) { endPhase(); return; }
   current = queue.shift();
   answered = false;
-  document.getElementById('prompt').textContent = current.ru;
-  const done = phaseTotal - queue.length - 1;
-  document.getElementById('counter').textContent = `${done + 1} / ${phaseTotal}`;
-  document.getElementById('progress-fill').style.width = (done / phaseTotal * 100) + '%';
+
+  const inner = document.getElementById('card-inner');
+  inner.classList.remove('anim-in');
+  inner.classList.add('anim-out');
+
+  setTimeout(() => {
+    inner.classList.remove('anim-out');
+    if (window._isAlpha) {
+      inner.innerHTML = `<div class="card-geo-letter">${current.q}</div><div class="card-counter" id="counter"></div>`;
+    } else {
+      inner.innerHTML = `<div class="card-prompt">${current.q}</div><div class="card-counter" id="counter"></div>`;
+    }
+    const done = phaseTotal - queue.length - 1;
+    document.getElementById('counter').textContent = `${done+1} / ${phaseTotal}`;
+    document.getElementById('progress-fill').style.width = (done/phaseTotal*100)+'%';
+    inner.classList.add('anim-in');
+  }, 200);
+
   document.getElementById('feedback').textContent = '';
   document.getElementById('feedback').className = 'feedback';
   document.getElementById('correct-answer').textContent = '';
   const ans = document.getElementById('answer');
-  ans.value = ''; ans.disabled = false;
+  ans.value = ''; ans.disabled = false; ans.className = '';
   document.getElementById('next-btn').style.display = 'none';
   updateStats();
-  ans.focus();
+  setTimeout(() => ans.focus(), 280);
+}
+
+function spawnParticles(x, y, color) {
+  for(let i=0;i<14;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size=4+Math.random()*8, angle=Math.random()*Math.PI*2, dist=50+Math.random()*100;
+    p.style.cssText=`left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${color};--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;animation-delay:${Math.random()*0.09}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),950);
+  }
 }
 
 function check() {
@@ -370,22 +618,34 @@ function check() {
   const userRaw = document.getElementById('answer').value;
   if (!userRaw.trim()) return;
   const user = normalize(userRaw);
-  const ok = current.en.map(normalize).some(a => user === a);
+  const ok = current.a.map(normalize).some(a => user === a);
   answered = true;
-  document.getElementById('answer').disabled = true;
-  const fb = document.getElementById('feedback');
+  const ans = document.getElementById('answer');
+  ans.disabled = true;
+  const card = document.getElementById('card');
+  const fb   = document.getElementById('feedback');
+  const rect = document.getElementById('submit').getBoundingClientRect();
+
   if (ok) {
     phaseCorrect++;
     fb.textContent = '✓ Верно!'; fb.className = 'feedback correct';
-    document.getElementById('correct-answer').textContent = '';
+    ans.className = 'correct-flash';
+    card.classList.remove('shake'); card.classList.add('pop');
+    setTimeout(()=>card.classList.remove('pop'),350);
+    spawnParticles(rect.left+rect.width/2, rect.top+rect.height/2, '#5cdb95');
   } else {
     phaseWrong++;
     fb.textContent = '✗ Неверно.'; fb.className = 'feedback wrong';
-    document.getElementById('correct-answer').textContent = 'Правильно: ' + current.en[0];
+    ans.className = 'wrong-flash';
+    card.classList.remove('pop'); card.classList.add('shake');
+    setTimeout(()=>card.classList.remove('shake'),450);
+    document.getElementById('correct-answer').textContent = 'Правильно: ' + current.a[0];
     mistakes.push(current);
+    spawnParticles(rect.left+rect.width/2, rect.top+rect.height/2, '#ff6b6b');
   }
+
   updateStats();
-  document.getElementById('progress-fill').style.width = ((phaseTotal - queue.length) / phaseTotal * 100) + '%';
+  document.getElementById('progress-fill').style.width = ((phaseTotal-queue.length)/phaseTotal*100)+'%';
   const nb = document.getElementById('next-btn');
   nb.style.display = 'inline-block';
   nb.textContent = queue.length === 0 ? 'Завершить раунд →' : 'Следующее →';
@@ -394,26 +654,36 @@ function check() {
 function endPhase() {
   document.getElementById('progress-fill').style.width = '100%';
   document.getElementById('main').style.display = 'none';
-  document.getElementById('end-screen').style.display = 'block';
+  const es  = document.getElementById('end-screen');
+  es.style.display = 'block';
   const btn = document.getElementById('action-btn');
+
+  // what words to restart with
+  const currentWords = lang.sets[currentSetIdx].subsets
+    ? lang.sets[currentSetIdx].subsets[currentSubsetIdx].words
+    : lang.sets[currentSetIdx].words;
+  const isAlpha = lang.sets[currentSetIdx].isAlphabet;
+
   if (mistakes.length > 0) {
+    document.getElementById('end-emoji').textContent = '💪';
     document.getElementById('end-title').textContent = `Раунд ${phase} завершён`;
-    document.getElementById('end-body').textContent =
-      `Верно: ${phaseCorrect} / ${phaseTotal}. Ошибок: ${mistakes.length} — сейчас повторим их.`;
-    btn.textContent = `Перейти к ошибкам (${mistakes.length}) →`;
+    document.getElementById('end-body').textContent = `Верно: ${phaseCorrect} / ${phaseTotal}\nОшибок: ${mistakes.length} — повторим их!`;
+    btn.textContent = `Работать над ошибками (${mistakes.length}) →`;
     btn.onclick = () => {
-      document.getElementById('end-screen').style.display = 'none';
+      es.style.display = 'none';
       document.getElementById('main').style.display = 'block';
-      startPhase([...mistakes], phase + 1);
+      window._isAlpha = isAlpha;
+      startPhase([...mistakes], phase+1);
     };
   } else {
-    document.getElementById('end-title').textContent = phase === 1 ? '🎉 Без ошибок!' : '🎉 Все ошибки исправлены!';
-    document.getElementById('end-body').textContent = `Верно: ${phaseCorrect} / ${phaseTotal}. Отлично!`;
-    btn.textContent = 'Начать заново с нуля';
+    document.getElementById('end-emoji').textContent = '🏆';
+    document.getElementById('end-title').textContent = phase===1 ? 'Без ошибок!' : 'Все ошибки исправлены!';
+    document.getElementById('end-body').textContent = `Верно: ${phaseCorrect} / ${phaseTotal}\nОтличная работа!`;
+    btn.textContent = 'Начать заново';
     btn.onclick = () => {
-      document.getElementById('end-screen').style.display = 'none';
+      es.style.display = 'none';
       document.getElementById('main').style.display = 'block';
-      startPhase(SETS[currentSetIdx].words, 1);
+      startGame(currentWords, isAlpha);
     };
   }
 }
@@ -423,8 +693,6 @@ document.getElementById('answer').addEventListener('keydown', e => {
   if (e.key === 'Enter') answered ? nextCard() : check();
 });
 document.getElementById('next-btn').addEventListener('click', nextCard);
-
-selectSet(0);
 </script>
 </body>
 </html>
