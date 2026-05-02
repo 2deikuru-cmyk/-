@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Макроэкономика — Учебник с озвучкой</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0e0d;
+  --surface: #1a1916;
+  --surface2: #222120;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0ede8;
+  --text2: #a09a92;
+  --text3: #635e58;
+  --accent: #d4a853;
+  --accent2: #b8863a;
+  --accent-bg: rgba(212,168,83,0.08);
+  --green: #6db87a;
+  --green-bg: rgba(109,184,122,0.1);
+  --red: #d46b6b;
+  --red-bg: rgba(212,107,107,0.1);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Onest', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+header {
+  margin-bottom: 2.5rem;
+}
+
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+
+header h1 span { color: var(--accent); }
+
+header p {
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 2rem;
+  border: 0.5px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-family: 'Onest', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all .2s;
+  font-weight: 400;
+}
+
+.tab.active {
+  background: var(--surface2);
+  color: var(--text);
+  font-weight: 500;
+  border: 0.5px solid var(--border2);
+}
+
+.tab:hover:not(.active) { color: var(--text); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* TTS BAR */
+.tts-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-bottom: 1.5rem;
+}
+
+.tts-bar .label {
+  font-size: 12px;
+  color: var(--text2);
+  white-space: nowrap;
+}
+
+.tts-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: none;
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Onest', sans-serif;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+.tts-btn:hover { background: var(--surface2); border-color: var(--accent); color: var(--accent); }
+.tts-btn.playing { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.tts-btn.playing .btn-icon::after { content: '⏸'; }
+.tts-btn:not(.playing) .btn-icon::after { content: '▶'; }
+
+.tts-speed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.tts-speed label { font-size: 12px; color: var(--text2); }
+.tts-speed select {
+  background: var(--surface2);
+  border: 0.5px solid var(--border2);
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.tts-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+  transition: background .3s;
+}
+.tts-indicator.active { background: var(--accent); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* THEORY */
+.topic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.topic-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 14px;
+  transition: all .15s;
+}
+
+.topic-btn:hover {
+  background: var(--surface2);
+  border-color: var(--border2);
+}
+
+.topic-btn .num {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  min-width: 18px;
+  font-family: 'Playfair Display', serif;
+}
+
+.topic-btn .arrow { margin-left: auto; color: var(--text3); font-size: 12px; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-family: 'Onest', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  transition: color .15s;
+}
+.back-btn:hover { color: var(--text); }
+
+.topic-content {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+
+.topic-content h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.topic-content p {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+
+.topic-content p:last-child { margin-bottom: 0; }
+
+.topic-content strong { color: var(--text); font-weight: 500; }
+
+.highlight {
+  background: var(--accent-bg);
+  border-left: 2px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 14px 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+/* FLASHCARDS */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-meta span { font-size: 12px; color: var(--text3); }
+
+.progress-bar {
+  width: 100%;
+  height: 2px;
+  background: var(--surface2);
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width .3s;
+}
+
+.flashcard {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  transition: border-color .2s, background .2s;
+  margin-bottom: 12px;
+}
+
+.flashcard:hover { border-color: var(--border2); }
+
+.flashcard.flipped {
+  background: var(--surface2);
+  border-color: var(--accent);
+}
+
+.side-label {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card-q {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.card-a {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.75;
+  display: none;
+}
+
+.flashcard.flipped .card-q { display: none; }
+.flashcard.flipped .card-a { display: block; }
+
+.card-hint { text-align: center; font-size: 12px; color: var(--text3); margin-bottom: 1rem; }
+
+.card-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nav-btn {
+  padding: 9px 22px;
+  background: none;
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.nav-btn:hover { background: var(--surface2); border-color: var(--accent); }
+
+/* QUIZ */
+.q-counter { font-size: 12px; color: var(--text3); margin-bottom: 6px; letter-spacing: .05em; }
+
+.quiz-q {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.quiz-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+
+.quiz-opt {
+  padding: 13px 16px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text2);
+  font-family: 'Onest', sans-serif;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.quiz-opt:hover:not(:disabled) { background: var(--surface2); border-color: var(--border2); color: var(--text); }
+.quiz-opt.correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.quiz-opt.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+.quiz-opt:disabled { cursor: default; }
+
+.quiz-feedback {
+  font-size: 13px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  line-height: 1.65;
+}
+
+.quiz-feedback.ok { background: var(--green-bg); color: var(--green); border: 0.5px solid rgba(109,184,122,0.3); }
+.quiz-feedback.bad { background: var(--red-bg); color: var(--red); border: 0.5px solid rgba(212,107,107,0.3); }
+
+.next-btn {
+  padding: 11px 28px;
+  background: none;
+  border: 0.5px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-family: 'Onest', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.next-btn:hover { background: var(--accent-bg); }
+
+.score-box {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.score-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.score-sub { font-size: 14px; color: var(--text2); margin-bottom: 2rem; }
+
+.score-btn {
+  padding: 11px 28px;
+  background: none;
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Onest', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 4px;
+  transition: all .15s;
+}
+.score-btn:hover { background: var(--surface2); }
+
+.quiz-start-box {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.quiz-start-box p { color: var(--text2); font-size: 14px; margin-bottom: 2rem; }
+
+.start-btn {
+  padding: 13px 40px;
+  background: none;
+  border: 0.5px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.start-btn:hover { background: var(--accent-bg); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Макро<span>экономика</span></h1>
+    <p>Учебник с озвучкой — теория, карточки, тест</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showSection('theory',this)">Теория</button>
+    <button class="tab" onclick="showSection('cards',this)">Карточки</button>
+    <button class="tab" onclick="showSection('quiz',this)">Тест</button>
+  </div>
+
+  <!-- TTS BAR -->
+  <div class="tts-bar">
+    <div class="tts-indicator" id="ttsIndicator"></div>
+    <span class="label">Озвучка:</span>
+    <button class="tts-btn" id="ttsBtn" onclick="toggleTTS()">
+      <span class="btn-icon"></span>
+      <span id="ttsBtnText">Читать</span>
+    </button>
+    <button class="tts-btn" onclick="stopTTS()" style="opacity:0.6">⏹ Стоп</button>
+    <div class="tts-speed">
+      <label>Скорость:</label>
+      <select id="ttsRate" onchange="updateRate()">
+        <option value="0.8">0.8×</option>
+        <option value="1" selected>1×</option>
+        <option value="1.2">1.2×</option>
+        <option value="1.5">1.5×</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- THEORY -->
+  <div id="theory" class="section active">
+    <div id="topic-list">
+      <div class="topic-grid" id="topicGrid"></div>
+    </div>
+    <div id="topic-detail" style="display:none">
+      <button class="back-btn" onclick="showTopicList()">← Назад</button>
+      <div class="topic-content" id="topicContent"></div>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <div id="cards" class="section">
+    <div class="card-meta">
+      <span id="cardCounter"></span>
+      <span id="cardStatus"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="cardProgress"></div></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <span class="side-label" id="sideLabel">Вопрос</span>
+      <span class="card-q" id="cardQ"></span>
+      <span class="card-a" id="cardA"></span>
+    </div>
+    <p class="card-hint">Нажми на карточку, чтобы увидеть ответ</p>
+    <div class="card-nav">
+      <button class="nav-btn" onclick="prevCard()">← Назад</button>
+      <button class="nav-btn" onclick="nextCard()">Вперёд →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="section">
+    <div id="quiz-start" class="quiz-start-box">
+      <p>15 вопросов по всем темам курса. Удачи!</p>
+      <button class="start-btn" onclick="startQuiz()">Начать тест</button>
+    </div>
+    <div id="quiz-main" style="display:none">
+      <div class="q-counter" id="qCounter"></div>
+      <div class="progress-bar"><div class="progress-fill" id="quizProgress"></div></div>
+      <div class="quiz-q" id="quizQ"></div>
+      <div class="quiz-options" id="quizOpts"></div>
+      <div class="quiz-feedback" id="quizFeedback" style="display:none"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display:none">Следующий →</button>
+    </div>
+    <div id="quiz-score" class="score-box" style="display:none">
+      <div class="score-big" id="scoreText"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <button class="score-btn" onclick="restartQuiz()">Пройти снова</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────
+const topics = [
+  {
+    title: "Что изучает макроэкономика. Основные школы",
+    content: `<h3>Макроэкономика — это раздел экономики, который изучает хозяйство страны как единое целое.</h3>
+<p>В отличие от микроэкономики (где изучают отдельные фирмы и домохозяйства), макроэкономика смотрит на большие агрегаты: ВВП, безработицу, инфляцию, денежную массу.</p>
+<div class="highlight">Ключевые вопросы: Почему растёт или падает производство? Что вызывает инфляцию? Как снизить безработицу?</div>
+<p><strong>Кейнсианство</strong> — Джон Мейнард Кейнс. Рынок не всегда саморегулируется, нужно вмешательство государства. В кризис государство должно тратить деньги, чтобы оживить спрос.</p>
+<p><strong>Неоклассическая школа</strong> — рынки эффективны, цены гибкие, экономика сама приходит в равновесие. Государство мешает больше, чем помогает.</p>
+<p><strong>Монетаризм</strong> — Милтон Фридман. Главное — контролировать денежную массу. Инфляция — это всегда «слишком много денег».</p>`,
+    tts: "Макроэкономика — это раздел экономики, который изучает хозяйство страны как единое целое. Ключевые вопросы: почему растёт или падает производство? что вызывает инфляцию? как снизить безработицу? Основные школы: Кейнсианство — Кейнс считал, что рынок не всегда саморегулируется и нужно вмешательство государства. Неоклассики считают, что рынки эффективны и цены гибкие. Монетаризм — Милтон Фридман считал главным контроль денежной массы."
+  },
+  {
+    title: "Методы макроэкономики",
+    content: `<h3>Как экономисты изучают экономику?</h3>
+<p><strong>Математическое моделирование</strong> — создание упрощённых математических описаний реальности. Формула ВВП = C + I + G + NX — это уже модель.</p>
+<div class="highlight">Модель — это как карта: она не отражает всю реальность, но помогает ориентироваться.</div>
+<p><strong>Анализ равновесия</strong> — поиск точки, где спрос и предложение совпадают. В макроэкономике ищут равновесие на рынке товаров, денег, труда одновременно.</p>
+<p><strong>Частичное равновесие</strong> — анализируем один рынок, остальные считаем неизменными.</p>
+<p><strong>Общее равновесие</strong> — все рынки взаимосвязаны и рассматриваются вместе (модель IS-LM).</p>`,
+    tts: "Методы макроэкономики. Математическое моделирование — создание упрощённых описаний реальности. Модель — это как карта: она не отражает всю реальность, но помогает ориентироваться. Анализ равновесия — поиск точки, где спрос и предложение совпадают. Частичное равновесие анализирует один рынок. Общее равновесие рассматривает все рынки вместе — это модель IS-LM."
+  },
+  {
+    title: "Системы национальных счетов",
+    content: `<h3>СНС — это способ посчитать, сколько произвела вся страна за год.</h3>
+<p><strong>ВВП (валовый внутренний продукт)</strong> — стоимость всех конечных товаров и услуг, произведённых на территории страны за год.</p>
+<div class="highlight">ВВП можно считать тремя способами:<br>• По расходам: ВВП = C + I + G + NX<br>• По доходам: зарплаты + прибыль + рента + проценты<br>• По добавленной стоимости</div>
+<p><strong>Реальный vs номинальный ВВП:</strong> номинальный — в текущих ценах; реальный — скорректированный на инфляцию.</p>
+<p><strong>Дефлятор ВВП</strong> = Номинальный ВВП делить на Реальный ВВП, умноженное на 100. Это мера инфляции.</p>`,
+    tts: "Системы национальных счетов — способ посчитать, сколько произвела вся страна за год. ВВП — это стоимость всех конечных товаров и услуг за год. Его считают тремя методами: по расходам — это потребление плюс инвестиции плюс госрасходы плюс чистый экспорт; по доходам; по добавленной стоимости. Реальный ВВП скорректирован на инфляцию и показывает настоящий рост. Дефлятор ВВП — это мера инфляции в экономике."
+  },
+  {
+    title: "Модель Хикса (IS-LM)",
+    content: `<h3>IS-LM — анализ совместного равновесия товарного и денежного рынков.</h3>
+<p>Придумал её Джон Хикс в 1937 году как формализацию идей Кейнса.</p>
+<p><strong>Кривая IS</strong> (Investment = Saving) — равновесие товарного рынка. Наклонена вниз: при высокой ставке инвестиции падают → ВВП ниже.</p>
+<p><strong>Кривая LM</strong> (Liquidity = Money) — равновесие денежного рынка. Наклонена вверх: при высоком ВВП нужно больше денег → ставка растёт.</p>
+<div class="highlight">Пересечение IS и LM — одновременное равновесие обоих рынков.</div>
+<p><strong>Фискальная политика</strong> сдвигает IS вправо. <strong>Монетарная политика</strong> сдвигает LM вправо.</p>`,
+    tts: "Модель Хикса, или IS-LM. Джон Хикс создал её в 1937 году. Кривая IS — равновесие товарного рынка, наклонена вниз: при высокой ставке инвестиции падают и ВВП ниже. Кривая LM — равновесие денежного рынка, наклонена вверх: при высоком ВВП нужно больше денег и ставка растёт. Пересечение IS и LM даёт одновременное равновесие обоих рынков. Фискальная политика сдвигает кривую IS вправо, монетарная политика сдвигает LM вправо."
+  },
+  {
+    title: "Кейнсианский крест",
+    content: `<h3>Кейнсианский крест — простая модель определения равновесного ВВП.</h3>
+<p>На вертикальной оси — совокупные расходы. На горизонтальной — фактический выпуск. Биссектриса — линия, где расходы = выпуску.</p>
+<div class="highlight">Равновесие там, где линия планируемых расходов пересекает биссектрису (45°). Это равновесный ВВП.</div>
+<p>Если ВВП > равновесного — фирмы накапливают лишние запасы → сокращают производство.</p>
+<p>Если ВВП < равновесного — запасы кончаются → фирмы наращивают производство.</p>
+<p><strong>Мультипликатор:</strong> рост госрасходов на 1 рубль увеличивает ВВП больше чем на 1 рубль.</p>`,
+    tts: "Кейнсианский крест — простая модель равновесного ВВП. По вертикали — расходы, по горизонтали — выпуск. Равновесие там, где линия расходов пересекает биссектрису под углом 45 градусов. Если ВВП выше равновесного — фирмы накапливают запасы и сокращают производство. Если ниже — запасы кончаются и производство растёт. Мультипликатор: рост госрасходов на один рубль увеличивает ВВП больше чем на один рубль."
+  },
+  {
+    title: "Автономные расходы",
+    content: `<h3>Автономные расходы — это расходы, которые не зависят от уровня дохода.</h3>
+<p>Формула потребления: C = a + b×Y, где <strong>a</strong> — автономное потребление (не зависит от Y), <strong>b×Y</strong> — индуцированное.</p>
+<div class="highlight">К автономным расходам относятся: госзакупки G, автономные инвестиции, автономное потребление, чистый экспорт.</div>
+<p>Именно изменение автономных расходов запускает мультипликатор. Мультипликатор = 1 делить на (1 минус предельная склонность к потреблению).</p>`,
+    tts: "Автономные расходы — это расходы, не зависящие от уровня дохода или ВВП. Формула потребления: C равно a плюс b умноженное на Y. Здесь a — автономное потребление, а b умноженное на Y — индуцированное. К автономным расходам относятся государственные закупки, автономные инвестиции, автономное потребление домохозяйств. Именно изменение автономных расходов запускает мультипликатор."
+  },
+  {
+    title: "Денежный рынок и совокупный спрос на деньги",
+    content: `<h3>Денежный рынок — рынок, где определяется процентная ставка.</h3>
+<p>Спрос на деньги — желание держать деньги в ликвидной форме, а не вкладывать в облигации.</p>
+<p><strong>Три мотива по Кейнсу:</strong> трансакционный (для покупок), предосторожности (на непредвиденное), спекулятивный (для вложений).</p>
+<div class="highlight">Совокупный спрос: Md = L(Y, r) — растёт с ростом дохода Y и падает с ростом ставки r.</div>
+<p><strong>Факторы:</strong> уровень цен, реальный ВВП, процентная ставка, технологии, ожидания инфляции.</p>`,
+    tts: "Денежный рынок — это рынок, где определяется процентная ставка. Спрос на деньги — это желание держать деньги наличными, а не вкладывать в облигации. По Кейнсу три мотива: трансакционный — для повседневных покупок, предосторожности — на непредвиденные расходы, спекулятивный — для выгодных вложений. Совокупный спрос на деньги растёт с ростом дохода и падает с ростом ставки. Факторы влияния: уровень цен, реальный ВВП, процентная ставка."
+  },
+  {
+    title: "Спрос на деньги по Кейнсу",
+    content: `<h3>Кейнсианская теория предпочтения ликвидности.</h3>
+<p>Люди предпочитают держать деньги из-за их абсолютной ликвидности.</p>
+<div class="highlight">Ключевая идея: спрос на деньги отрицательно зависит от ставки. Ловушка ликвидности — при очень низкой ставке все держат деньги наличными, монетарная политика перестаёт работать.</div>
+<p>Именно в этой ситуации Кейнс призывал к <strong>фискальной политике</strong> — государство должно само тратить деньги.</p>
+<p>При высокой ставке → выгодно покупать облигации → спрос на деньги низкий. При низкой ставке → облигации невыгодны → держат деньги.</p>`,
+    tts: "Спрос на деньги по Кейнсу — теория предпочтения ликвидности. Люди предпочитают держать деньги из-за их абсолютной ликвидности. Ключевая идея: спрос на деньги отрицательно зависит от процентной ставки. Ловушка ликвидности — при очень низкой ставке все держат деньги наличными и монетарная политика перестаёт работать. Именно тогда Кейнс призывал к фискальной политике — государство должно само тратить деньги."
+  },
+  {
+    title: "Правило денежного обращения. Фридман",
+    content: `<h3>Монетаризм Милтона Фридмана.</h3>
+<p>Количественное уравнение: <strong>MV = PQ</strong>, где M — денежная масса, V — скорость, P — цены, Q — выпуск.</p>
+<div class="highlight">Правило Фридмана: денежная масса должна расти постоянным темпом ≈ темп роста ВВП (3–5% в год). Никаких активных манипуляций!</div>
+<p>Фридман считал, что запаздывания монетарной политики (6–18 месяцев) делают активное управление опасным.</p>
+<p>Великая депрессия углубилась потому, что ФРС допустила сжатие денежной массы на треть.</p>`,
+    tts: "Монетаризм Милтона Фридмана. Количественное уравнение: M умноженное на V равно P умноженному на Q. M — денежная масса, V — скорость обращения, P — уровень цен, Q — реальный выпуск. Правило Фридмана: денежная масса должна расти постоянным темпом, примерно равным темпу роста ВВП — три-пять процентов в год. Никаких активных манипуляций! Фридман считал, что запаздывания денежной политики от шести до восемнадцати месяцев делают активное управление опасным. Великая депрессия углубилась из-за сжатия денежной массы на треть."
+  },
+  {
+    title: "Неоклассика vs кейнсианство: гибкость цен",
+    content: `<h3>Главный спор: как быстро рынки приходят в равновесие?</h3>
+<p><strong>Неоклассики:</strong> цены и зарплаты абсолютно гибкие. Рынок мгновенно реагирует. Безработица краткосрочна.</p>
+<p><strong>Кейнсианцы:</strong> цены и зарплаты жёсткие — медленно реагируют на изменения спроса.</p>
+<div class="highlight">Жёсткость зарплат: контракты, профсоюзы и мораль мешают быстро снизить зарплаты → при падении спроса возникает безработица.</div>
+<p>Если цены гибкие → экономика восстанавливается сама. Если жёсткие → застревает в кризисе → нужно вмешательство.</p>`,
+    tts: "Главный спор макроэкономики: насколько быстро рынки приходят в равновесие. Неоклассики считают: цены и зарплаты абсолютно гибкие, рынок мгновенно реагирует. Кейнсианцы считают: цены и особенно зарплаты жёсткие — они медленно реагируют. Жёсткость зарплат объясняется контрактами, профсоюзами и социальными нормами. При падении спроса возникает безработица, а не снижение зарплат. Если цены гибкие — экономика восстанавливается сама. Если жёсткие — застревает в кризисе и нужно вмешательство."
+  },
+  {
+    title: "Когда государство вмешивается в рынок (Кейнс)",
+    content: `<h3>Кейнс: рынок не всегда знает лучше.</h3>
+<p><strong>Условия для вмешательства:</strong></p>
+<p>1. Рецессия — совокупный спрос упал, частный сектор «зажат страхом».</p>
+<p>2. Ловушка ликвидности — монетарная политика не работает.</p>
+<p>3. Высокая безработица — жёсткие зарплаты мешают рынку труда.</p>
+<div class="highlight">Инструменты: увеличение госрасходов (G↑) и снижение налогов (T↓). Кейнс не был против рынка — он за дополнение рынка в моменты сбоев.</div>`,
+    tts: "Кейнс считал, что государство должно вмешиваться при трёх условиях. Первое — рецессия, когда совокупный спрос упал и частный сектор не инвестирует. Второе — ловушка ликвидности, когда монетарная политика бессильна. Третье — высокая безработица из-за жёстких зарплат. Инструменты: увеличение госрасходов и снижение налогов. Кейнс был не против рынка — он считал, что государство должно дополнять рынок только в моменты сбоев."
+  }
+];
+
+const flashcards = [
+  {q:"Что изучает макроэкономика?", a:"Экономику страны как единое целое: ВВП, инфляцию, безработицу, денежную массу и государственную политику."},
+  {q:"Три основные школы макроэкономики?", a:"Кейнсианство (Кейнс — госвмешательство), Неоклассика (рынок сам справится), Монетаризм (Фридман — контроль денежной массы)."},
+  {q:"Что такое ВВП и как его считают?", a:"Стоимость всех конечных товаров/услуг за год. Три метода: по расходам (C+I+G+NX), по доходам, по добавленной стоимости."},
+  {q:"Что такое модель IS-LM (Хикса)?", a:"Модель совместного равновесия товарного (IS) и денежного (LM) рынков. Пересечение кривых даёт равновесный ВВП и ставку."},
+  {q:"Что показывает кейнсианский крест?", a:"Равновесный ВВП — точку, где планируемые расходы равны фактическому выпуску (пересечение с биссектрисой 45°)."},
+  {q:"Что такое автономные расходы?", a:"Расходы, не зависящие от уровня дохода: госрасходы, автономные инвестиции, автономное потребление. Их рост запускает мультипликатор."},
+  {q:"Три мотива держать деньги по Кейнсу?", a:"1) Трансакционный (для покупок), 2) Предосторожности (на случай), 3) Спекулятивный (ожидание выгодных вложений)."},
+  {q:"Что такое ловушка ликвидности?", a:"Ситуация, когда ставка так низка, что снижать дальше некуда. Денежная политика не работает — деньги оседают, не стимулируя экономику."},
+  {q:"Правило Фридмана?", a:"Денежная масса должна расти постоянным темпом (≈ темп роста ВВП, 3-5% в год). Никаких активных манипуляций."},
+  {q:"Уравнение MV = PQ — что означает?", a:"M — деньги, V — скорость, P — цены, Q — выпуск. Рост M при стабильном V ведёт к росту цен (инфляции)."},
+  {q:"В чём спор о гибкости цен?", a:"Неоклассики: цены гибкие, рынок балансируется сам. Кейнсианцы: цены жёсткие, кризисы затягиваются, нужно госвмешательство."},
+  {q:"Когда по Кейнсу нужно вмешательство?", a:"В рецессии, при ловушке ликвидности и высокой безработице — когда частный сектор не инвестирует."},
+  {q:"Что такое мультипликатор?", a:"Эффект, при котором рост автономных расходов на 1 рубль увеличивает ВВП больше. Мультипликатор = 1/(1-MPC)."},
+  {q:"Реальный vs номинальный ВВП?", a:"Номинальный — в текущих ценах. Реальный — скорректированный на инфляцию, показывает настоящий рост."},
+  {q:"Чем отличается IS от LM?", a:"IS — равновесие товарного рынка (наклон вниз). LM — денежного (наклон вверх). Их пересечение — общее равновесие."}
+];
+
+const quiz = [
+  {q:"Что изучает макроэкономика?", opts:["Поведение отдельных фирм","Экономику страны как целое","Только рынок труда","Торговлю между странами"],a:1,exp:"Макроэкономика — раздел об агрегированных показателях: ВВП, инфляции, безработице всей страны."},
+  {q:"Кто создал модель IS-LM?", opts:["Кейнс","Фридман","Хикс","Маршалл"],a:2,exp:"Джон Хикс разработал IS-LM в 1937 году как формализацию идей Кейнса."},
+  {q:"Что такое жёсткость цен?", opts:["Цены вообще не меняются","Цены медленно реагируют на изменения спроса","Государство фиксирует цены","Цены растут быстрее инфляции"],a:1,exp:"Жёсткость — медленная реакция цен. Из-за неё безработица не исчезает мгновенно при кризисе."},
+  {q:"Правило Фридмана гласит:", opts:["Государство активно управляет экономикой","Денежная масса растёт постоянным темпом","Налоги поднимают в кризис","Дефицит бюджета — благо"],a:1,exp:"Постоянный темп роста денег лучше, чем активная политика с запаздываниями."},
+  {q:"Что показывает кейнсианский крест?", opts:["Равновесие денежного рынка","Равновесный ВВП как пересечение расходов с линией 45°","Зависимость инфляции от безработицы","Совокупное предложение"],a:1,exp:"Кейнсианский крест — модель товарного рынка, где равновесный ВВП там, где расходы = выпуску."},
+  {q:"Спекулятивный мотив держать деньги зависит от:", opts:["Уровня дохода","Процентной ставки","Ничего","Налогов"],a:1,exp:"При низкой ставке облигации невыгодны → держат больше денег. При высокой — покупают облигации."},
+  {q:"Ловушка ликвидности — это:", opts:["Высокая инфляция","Ситуация, когда снижение ставки не стимулирует экономику","Чрезмерные госрасходы","Дефицит банков"],a:1,exp:"При ставке около нуля люди держат деньги наличными, монетарная политика бессильна."},
+  {q:"ВВП по расходам:", opts:["C + I + G + NX","W + R + P + I","MV/P","TR - TX"],a:0,exp:"Потребление + Инвестиции + Госрасходы + Чистый экспорт."},
+  {q:"Автономные расходы — это:", opts:["Расходы, растущие с ВВП","Расходы, не зависящие от дохода","Только госрасходы","Инвестиции в акции"],a:1,exp:"Автономные расходы независимы от ВВП. Их изменение запускает мультипликатор."},
+  {q:"Чем реальный ВВП отличается от номинального?", opts:["Включает теневую экономику","Скорректирован на инфляцию","Только промышленность","Различий нет"],a:1,exp:"Реальный ВВП очищен от инфляции и показывает истинный рост производства."},
+  {q:"Неоклассики считают:", opts:["Цены жёсткие, нужно вмешательство","Рынки эффективны, государство мешает","Монетарная политика — главное","ВВП не растёт без субсидий"],a:1,exp:"Неоклассики верят в саморегуляцию: гибкие цены быстро восстанавливают равновесие."},
+  {q:"Кривая IS наклонена:", opts:["Вверх","Вниз","Горизонтально","Вертикально"],a:1,exp:"Вниз: при высокой ставке инвестиции падают → ВВП ниже."},
+  {q:"Когда по Кейнсу нужно госвмешательство?", opts:["Всегда","В рецессии, когда частный спрос упал","Только при инфляции","Когда ставка растёт"],a:1,exp:"Кейнс за вмешательство в кризис и при ловушке ликвидности, не постоянно."},
+  {q:"MV = PQ — чья формула?", opts:["Кейнса","Фишера (монетаристы)","Маршалла","Хикса"],a:1,exp:"Фридман опирался на уравнение Фишера: рост M при стабильном V ведёт к росту P."},
+  {q:"СНС — это:", opts:["Союз строителей","Система учёта экономики страны (ВВП, ВНП и др.)","Сбережения населения","Налоговая служба"],a:1,exp:"Система национальных счетов — международный стандарт: ВВП, ВНП, национальный доход."}
+];
+
+// ─── TTS ────────────────────────────────────────────
+let ttsPlaying = false;
+let ttsUtterance = null;
+let currentTTSText = '';
+
+function getTTSText() {
+  const activeSection = document.querySelector('.section.active').id;
+  if (activeSection === 'theory') {
+    const detailVisible = document.getElementById('topic-detail').style.display !== 'none';
+    if (detailVisible && currentTopicIndex >= 0) {
+      return topics[currentTopicIndex].tts;
+    }
+    return 'Выберите тему в разделе Теория, чтобы прослушать объяснение.';
+  } else if (activeSection === 'cards') {
+    const fc = flashcards[currentCard];
+    const flipped = document.getElementById('flashcard').classList.contains('flipped');
+    return flipped ? 'Ответ. ' + fc.a : 'Вопрос. ' + fc.q;
+  } else if (activeSection === 'quiz') {
+    const qEl = document.getElementById('quizQ');
+    return qEl.textContent || 'Запустите тест, чтобы прослушать вопросы.';
+  }
+  return '';
+}
+
+function toggleTTS() {
+  if (ttsPlaying) {
+    stopTTS();
+  } else {
+    playTTS();
+  }
+}
+
+function playTTS() {
+  if (!window.speechSynthesis) {
+    alert('Ваш браузер не поддерживает синтез речи.');
+    return;
+  }
+  stopTTS();
+  const text = getTTSText();
+  if (!text) return;
+  ttsUtterance = new SpeechSynthesisUtterance(text);
+  ttsUtterance.lang = 'ru-RU';
+  ttsUtterance.rate = parseFloat(document.getElementById('ttsRate').value);
+  ttsUtterance.onstart = () => {
+    ttsPlaying = true;
+    document.getElementById('ttsBtn').classList.add('playing');
+    document.getElementById('ttsBtnText').textContent = 'Пауза';
+    document.getElementById('ttsIndicator').classList.add('active');
+  };
+  ttsUtterance.onend = () => {
+    ttsPlaying = false;
+    document.getElementById('ttsBtn').classList.remove('playing');
+    document.getElementById('ttsBtnText').textContent = 'Читать';
+    document.getElementById('ttsIndicator').classList.remove('active');
+  };
+  ttsUtterance.onerror = () => {
+    ttsPlaying = false;
+    document.getElementById('ttsBtn').classList.remove('playing');
+    document.getElementById('ttsBtnText').textContent = 'Читать';
+    document.getElementById('ttsIndicator').classList.remove('active');
+  };
+  window.speechSynthesis.speak(ttsUtterance);
+}
+
+function stopTTS() {
+  window.speechSynthesis.cancel();
+  ttsPlaying = false;
+  document.getElementById('ttsBtn').classList.remove('playing');
+  document.getElementById('ttsBtnText').textContent = 'Читать';
+  document.getElementById('ttsIndicator').classList.remove('active');
+}
+
+function updateRate() {
+  if (ttsPlaying) { stopTTS(); playTTS(); }
+}
+
+// ─── SECTION ────────────────────────────────────────
+function showSection(id, btn) {
+  stopTTS();
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'cards') renderCard();
+}
+
+// ─── THEORY ─────────────────────────────────────────
+let currentTopicIndex = -1;
+
+function renderTopics() {
+  document.getElementById('topicGrid').innerHTML = topics.map((t, i) => `
+    <button class="topic-btn" onclick="showTopic(${i})">
+      <span class="num">${i + 1}</span>
+      <span>${t.title}</span>
+      <span class="arrow">→</span>
+    </button>`).join('');
+}
+
+function showTopic(i) {
+  stopTTS();
+  currentTopicIndex = i;
+  document.getElementById('topic-list').style.display = 'none';
+  document.getElementById('topic-detail').style.display = 'block';
+  document.getElementById('topicContent').innerHTML = topics[i].content;
+}
+
+function showTopicList() {
+  stopTTS();
+  currentTopicIndex = -1;
+  document.getElementById('topic-list').style.display = 'block';
+  document.getElementById('topic-detail').style.display = 'none';
+}
+
+// ─── FLASHCARDS ─────────────────────────────────────
+let currentCard = 0;
+
+function renderCard() {
+  stopTTS();
+  const c = flashcards[currentCard];
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  document.getElementById('cardQ').textContent = c.q;
+  document.getElementById('cardA').textContent = c.a;
+  document.getElementById('sideLabel').textContent = 'Вопрос';
+  document.getElementById('cardCounter').textContent = `Карточка ${currentCard + 1} из ${flashcards.length}`;
+  document.getElementById('cardProgress').style.width = ((currentCard + 1) / flashcards.length * 100) + '%';
+}
+
+function flipCard() {
+  stopTTS();
+  const fc = document.getElementById('flashcard');
+  fc.classList.toggle('flipped');
+  document.getElementById('sideLabel').textContent = fc.classList.contains('flipped') ? 'Ответ' : 'Вопрос';
+}
+
+function nextCard() { currentCard = (currentCard + 1) % flashcards.length; renderCard(); }
+function prevCard() { currentCard = (currentCard - 1 + flashcards.length) % flashcards.length; renderCard(); }
+
+// ─── QUIZ ────────────────────────────────────────────
+let quizIndex = 0, quizScore = 0, quizAnswered = false, quizOrder = [];
+
+function startQuiz() {
+  quizOrder = quiz.map((_, i) => i).sort(() => Math.random() - 0.5);
+  quizIndex = 0; quizScore = 0;
+  document.getElementById('quiz-start').style.display = 'none';
+  document.getElementById('quiz-score').style.display = 'none';
+  document.getElementById('quiz-main').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  stopTTS();
+  quizAnswered = false;
+  const q = quiz[quizOrder[quizIndex]];
+  document.getElementById('qCounter').textContent = `Вопрос ${quizIndex + 1} из ${quiz.length}`;
+  document.getElementById('quizProgress').style.width = (quizIndex / quiz.length * 100) + '%';
+  document.getElementById('quizQ').textContent = q.q;
+  document.getElementById('quizFeedback').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('quizOpts').innerHTML = q.opts.map((o, i) =>
+    `<button class="quiz-opt" onclick="answer(${i})">${o}</button>`).join('');
+}
+
+function answer(i) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quiz[quizOrder[quizIndex]];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled = true);
+  const correct = i === q.a;
+  if (correct) quizScore++;
+  btns[q.a].classList.add('correct');
+  if (!correct) btns[i].classList.add('wrong');
+  const fb = document.getElementById('quizFeedback');
+  fb.style.display = 'block';
+  fb.className = 'quiz-feedback ' + (correct ? 'ok' : 'bad');
+  fb.textContent = (correct ? '✓ Верно! ' : '✗ Неверно. ') + q.exp;
+  document.getElementById('nextBtn').style.display = 'block';
+  document.getElementById('nextBtn').textContent = quizIndex < quiz.length - 1 ? 'Следующий →' : 'Завершить';
+  // auto-read feedback
+  const utter = new SpeechSynthesisUtterance((correct ? 'Верно! ' : 'Неверно. ') + q.exp);
+  utter.lang = 'ru-RU';
+  utter.rate = parseFloat(document.getElementById('ttsRate').value);
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+}
+
+function nextQuestion() {
+  stopTTS();
+  quizIndex++;
+  if (quizIndex >= quiz.length) {
+    document.getElementById('quiz-main').style.display = 'none';
+    document.getElementById('quiz-score').style.display = 'block';
+    const pct = Math.round(quizScore / quiz.length * 100);
+    document.getElementById('scoreText').textContent = quizScore + '/' + quiz.length;
+    const msg = pct >= 80 ? 'Отлично! Материал хорошо освоен' : pct >= 60 ? 'Неплохо, ещё немного!' : 'Стоит повторить теорию';
+    document.getElementById('scoreSub').textContent = msg + ' — ' + pct + '%';
+    const utter = new SpeechSynthesisUtterance(`Тест завершён. Результат: ${quizScore} из ${quiz.length}. ${msg}.`);
+    utter.lang = 'ru-RU';
+    window.speechSynthesis.speak(utter);
+  } else renderQuestion();
+}
+
+function restartQuiz() { stopTTS(); document.getElementById('quiz-score').style.display = 'none'; startQuiz(); }
+
+// ─── INIT ────────────────────────────────────────────
+renderTopics();
+renderCard();
+</script>
+</body>
+</html>
