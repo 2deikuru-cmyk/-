@@ -19,6 +19,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px}
+html,body{overflow-x:hidden;max-width:100vw}
+input,select,textarea{max-width:100%}
 body{
   background:var(--bg); color:var(--ink);
   font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -97,13 +99,15 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:12px 0}
 /* ---------- week strip ---------- */
 .wstrip{display:flex;gap:6px;margin:14px 0 4px}
 .wday{
-  flex:1;border-radius:12px;padding:8px 2px;text-align:center;border:1px solid var(--line);
-  background:var(--card);cursor:pointer;
+  flex:1;min-width:0;border-radius:12px;padding:8px 2px;text-align:center;border:1px solid var(--line);
+  background:var(--card);cursor:pointer;overflow:hidden;
 }
 .wday .dn{font-size:.62rem;color:var(--mut);font-weight:700;text-transform:uppercase}
 .wday .di{font-size:1rem;margin:2px 0;line-height:1.2}
-.wday.today{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.wday.sel{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue);background:rgba(57,135,229,.12)}
+.wday.today .dn{color:var(--blue)}
 .wday.done{background:rgba(12,163,12,.12)}
+.wday.done.sel{background:rgba(12,163,12,.18)}
 
 /* ---------- progress bar ---------- */
 .pbar{height:8px;border-radius:99px;background:var(--card3);overflow:hidden;margin-top:8px}
@@ -112,8 +116,8 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:12px 0}
 /* ---------- exercise card ---------- */
 .excard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0}
 .excard.done-all{border-color:rgba(12,163,12,.45)}
-.exhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.exname{font-weight:800;font-size:.98rem;line-height:1.3}
+.exhead{display:flex;justify-content:space-between;gap:8px 10px;align-items:flex-start;flex-wrap:wrap}
+.exname{font-weight:800;font-size:.98rem;line-height:1.3;overflow-wrap:break-word;min-width:0}
 .exmeta{font-size:.78rem;color:var(--blue);font-weight:700;white-space:nowrap;background:rgba(57,135,229,.12);padding:3px 9px;border-radius:99px}
 .extip{font-size:.8rem;color:var(--mut);line-height:1.45;margin-top:6px}
 .sets{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
@@ -756,7 +760,7 @@ function weekStripHTML(){
     if(isWork)icon=w&&w.finishedAt?'✅':'🏋️';
     else if(isGtg)icon=(g&&g.length)?'✅':'🔁';
     else icon='😴';
-    const cls=['wday',ds===todayStr()?'today':'',(w&&w.finishedAt)||(isGtg&&g&&g.length)?'done':''].join(' ');
+    const cls=['wday',ds===viewDate?'sel':'',ds===todayStr()?'today':'',(w&&w.finishedAt)||(isGtg&&g&&g.length)?'done':''].join(' ');
     html+=`<div class="${cls}" data-goto="${ds}"><div class="dn">${DAY_NAMES[dow]}</div><div class="di">${icon}</div></div>`;
   }
   return html+'</div>';
