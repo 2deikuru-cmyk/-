@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Турник · Программа 10 недель</title>
+<style>
+:root{
+  --bg:#0d0d0d; --card:#1a1a19; --card2:#232321; --card3:#2c2c2a;
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --ink:#ffffff; --ink2:#c3c2b7; --mut:#898781;
+  --blue:#3987e5; --blue-d:#1c5cab; --green:#0ca30c; --aqua:#199e70;
+  --orange:#d95926; --red:#e66767; --yellow:#c98500; --violet:#9085e9;
+  --grid:#2c2c2a; --axis:#383835;
+  --r:16px; --nav-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-height:100dvh; overscroll-behavior-y:contain;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);
+  user-select:none; -webkit-user-select:none;
+}
+input,textarea{user-select:text;-webkit-user-select:text}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:30;background:rgba(13,13,13,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top);
+}
+.hrow{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;max-width:560px;margin:0 auto}
+.htitle{font-size:1.05rem;font-weight:800;letter-spacing:.2px}
+.hsub{font-size:.78rem;color:var(--mut);margin-top:2px}
+.iconbtn{
+  width:44px;height:44px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink2);font-size:1.15rem;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;
+}
+.iconbtn:active{transform:scale(.95)}
+
+/* ---------- bottom nav ---------- */
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:rgba(20,20,19,.96);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nrow{display:flex;max-width:560px;margin:0 auto}
+.ntab{
+  flex:1;height:var(--nav-h);border:0;background:none;color:var(--mut);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:.68rem;font-weight:600;cursor:pointer;font-family:inherit;
+}
+.ntab .ni{font-size:1.35rem;line-height:1}
+.ntab.on{color:var(--blue)}
+.ntab:active{transform:scale(.94)}
+
+/* ---------- cards & generic ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:12px 0}
+.card h3{font-size:1rem;font-weight:800;margin-bottom:4px}
+.sub{color:var(--mut);font-size:.82rem;line-height:1.45}
+.txt{color:var(--ink2);font-size:.9rem;line-height:1.55}
+.txt b{color:var(--ink)}
+.txt ul{padding-left:18px;margin:6px 0}
+.txt li{margin:4px 0}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.72rem;font-weight:700;border:1px solid var(--line2);color:var(--ink2)}
+.pill.blue{background:rgba(57,135,229,.16);color:#8db9f0;border-color:rgba(57,135,229,.35)}
+.pill.green{background:rgba(12,163,12,.16);color:#6fd36f;border-color:rgba(12,163,12,.35)}
+.pill.orange{background:rgba(217,89,38,.16);color:#f0916b;border-color:rgba(217,89,38,.35)}
+.pill.violet{background:rgba(144,133,233,.14);color:#b5aef1;border-color:rgba(144,133,233,.35)}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  min-height:52px;border-radius:14px;border:1px solid var(--line2);
+  background:var(--card2);color:var(--ink);font-size:1rem;font-weight:700;
+  cursor:pointer;font-family:inherit;padding:10px 16px;
+}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.good{background:var(--green);border-color:var(--green);color:#fff}
+.btn.ghost{background:none}
+.btn.danger{color:var(--red);border-color:rgba(230,103,103,.4)}
+.btn.sm{min-height:42px;font-size:.88rem;width:auto;padding:8px 14px;border-radius:12px}
+.row{display:flex;gap:10px;align-items:center}
+.row>.btn{flex:1}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px}
+hr.sep{border:0;border-top:1px solid var(--line);margin:12px 0}
+.center{text-align:center}
+.big-emoji{font-size:2.6rem;line-height:1}
+
+/* ---------- week strip ---------- */
+.wstrip{display:flex;gap:6px;margin:14px 0 4px}
+.wday{
+  flex:1;border-radius:12px;padding:8px 2px;text-align:center;border:1px solid var(--line);
+  background:var(--card);cursor:pointer;
+}
+.wday .dn{font-size:.62rem;color:var(--mut);font-weight:700;text-transform:uppercase}
+.wday .di{font-size:1rem;margin:2px 0;line-height:1.2}
+.wday.today{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.wday.done{background:rgba(12,163,12,.12)}
+
+/* ---------- progress bar ---------- */
+.pbar{height:8px;border-radius:99px;background:var(--card3);overflow:hidden;margin-top:8px}
+.pbar>div{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue-d),var(--blue))}
+
+/* ---------- exercise card ---------- */
+.excard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0}
+.excard.done-all{border-color:rgba(12,163,12,.45)}
+.exhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.exname{font-weight:800;font-size:.98rem;line-height:1.3}
+.exmeta{font-size:.78rem;color:var(--blue);font-weight:700;white-space:nowrap;background:rgba(57,135,229,.12);padding:3px 9px;border-radius:99px}
+.extip{font-size:.8rem;color:var(--mut);line-height:1.45;margin-top:6px}
+.sets{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.setbtn{
+  width:56px;height:56px;border-radius:50%;border:2px solid var(--line2);
+  background:var(--card2);color:var(--ink2);font-size:1.05rem;font-weight:800;
+  cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;
+}
+.setbtn small{font-size:.55rem;font-weight:700;color:var(--mut);margin-top:2px}
+.setbtn.done{background:var(--green);border-color:var(--green);color:#fff}
+.setbtn.done small{color:rgba(255,255,255,.8)}
+.setbtn.next{border-color:var(--blue);color:var(--ink);box-shadow:0 0 0 3px rgba(57,135,229,.25)}
+.setbtn:active{transform:scale(.93)}
+.exfoot{margin-top:10px;font-size:.78rem;color:var(--mut)}
+
+/* ---------- checklist (warmup) ---------- */
+.chk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.chk:last-child{border-bottom:0}
+.chk .box{
+  width:26px;height:26px;border-radius:8px;border:2px solid var(--line2);flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;color:#fff;
+}
+.chk.on .box{background:var(--green);border-color:var(--green)}
+.chk .cl{font-size:.9rem;color:var(--ink2);flex:1;line-height:1.35}
+.chk.on .cl{color:var(--mut);text-decoration:line-through}
+
+/* ---------- accordion ---------- */
+details.acc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin:10px 0;overflow:hidden}
+details.acc summary{
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:14px 16px;font-weight:800;font-size:.95rem;cursor:pointer;
+}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary .arr{color:var(--mut);transition:transform .2s;font-size:.8rem}
+details.acc[open] summary .arr{transform:rotate(180deg)}
+details.acc .accbody{padding:0 16px 14px}
+
+/* ---------- GTG ---------- */
+.gtg-count{font-size:3.4rem;font-weight:900;line-height:1}
+.gtg-log{margin-top:10px}
+.gtg-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--ink2)}
+.gtg-item:last-child{border-bottom:0}
+
+/* ---------- stat tiles ---------- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.tile .tv{font-size:1.7rem;font-weight:900;line-height:1.1}
+.tile .tl{font-size:.72rem;color:var(--mut);margin-top:4px;line-height:1.3}
+.tile .td{font-size:.75rem;font-weight:700;margin-top:3px}
+.td.up{color:#0ca30c}
+
+/* ---------- charts ---------- */
+.chart{width:100%;height:auto;display:block;margin-top:8px}
+.chart text{font-family:system-ui,sans-serif}
+
+/* ---------- history ---------- */
+.hitem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.hitem:last-child{border-bottom:0}
+.hitem .ht{font-size:.9rem;font-weight:700}
+.hitem .hs{font-size:.76rem;color:var(--mut);margin-top:2px}
+.hitem .hv{font-size:.95rem;font-weight:800;white-space:nowrap}
+.del{background:none;border:0;color:var(--mut);font-size:1rem;cursor:pointer;padding:6px}
+
+/* ---------- overlay / timer ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:100;background:rgba(10,10,10,.97);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+}
+.overlay.show{display:flex}
+.tlabel{font-size:1rem;color:var(--ink2);font-weight:700;max-width:340px;line-height:1.4}
+.tclock{font-size:5rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1;margin:18px 0}
+.tring{position:relative;width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin:10px 0}
+.tring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.tring .tclock{font-size:3.4rem;margin:0}
+.tbtns{display:flex;gap:10px;margin-top:22px;width:100%;max-width:360px}
+.tbtns .btn{flex:1}
+.tsub{color:var(--mut);font-size:.82rem;margin-top:14px}
+
+/* ---------- modal ---------- */
+.modal-bg{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.65);display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--line2);border-radius:22px 22px 0 0;
+  width:100%;max-width:560px;padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height:88dvh;overflow-y:auto;
+}
+.modal h3{font-size:1.05rem;margin-bottom:12px}
+.f{margin:12px 0}
+.f label{display:block;font-size:.78rem;color:var(--mut);font-weight:700;margin-bottom:6px}
+.f input[type=date],.f input[type=number],.f input[type=text],.f textarea,.f select{
+  width:100%;background:var(--card2);border:1px solid var(--line2);border-radius:12px;
+  color:var(--ink);font-size:1rem;padding:12px;font-family:inherit;
+}
+.f textarea{min-height:70px;resize:vertical}
+.stepper{display:flex;align-items:center;gap:14px;justify-content:center}
+.stepper button{
+  width:58px;height:58px;border-radius:50%;border:1px solid var(--line2);background:var(--card2);
+  color:var(--ink);font-size:1.6rem;font-weight:800;cursor:pointer;font-family:inherit;
+}
+.stepper .sv{font-size:2.4rem;font-weight:900;min-width:80px;text-align:center;font-variant-numeric:tabular-nums}
+.feelrow{display:flex;gap:8px}
+.feelrow button{
+  flex:1;height:52px;border-radius:12px;border:1px solid var(--line2);background:var(--card2);
+  font-size:1.4rem;cursor:pointer;
+}
+.feelrow button.on{border-color:var(--blue);background:rgba(57,135,229,.18)}
+
+/* ---------- phase chips ---------- */
+.chips{display:flex;gap:8px;margin:12px 0;overflow-x:auto;padding-bottom:2px}
+.chip{
+  padding:9px 15px;border-radius:99px;border:1px solid var(--line2);background:var(--card);
+  color:var(--ink2);font-size:.84rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;
+}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+.exline{padding:9px 0;border-bottom:1px solid var(--line)}
+.exline:last-child{border-bottom:0}
+.exline .en{font-size:.88rem;font-weight:700}
+.exline .ed{font-size:.76rem;color:var(--mut);margin-top:2px;line-height:1.4}
+.exline .ev{float:right;font-size:.8rem;color:var(--blue);font-weight:800;margin-left:8px}
+
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 24px);
+  background:var(--card3);border:1px solid var(--line2);color:var(--ink);
+  padding:11px 18px;border-radius:99px;font-size:.86rem;font-weight:700;z-index:200;
+  opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center;
+}
+.toast.show{opacity:1}
+.banner{
+  border-radius:var(--r);padding:14px;margin:12px 0;font-size:.88rem;line-height:1.45;
+  border:1px solid rgba(57,135,229,.4);background:rgba(57,135,229,.1);color:var(--ink2);
+}
+.banner b{color:var(--ink)}
+.banner.warn{border-color:rgba(201,133,0,.45);background:rgba(201,133,0,.1)}
+.banner.good{border-color:rgba(12,163,12,.45);background:rgba(12,163,12,.1)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="htitle" id="hTitle">Турник · 10 недель</div>
+      <div class="hsub" id="hSub"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="iconbtn" id="btnSettings" title="Настройки">⚙️</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="view"></main>
+
+<nav>
+  <div class="nrow">
+    <button class="ntab on" data-tab="today"><span class="ni">💪</span>Сегодня</button>
+    <button class="ntab" data-tab="program"><span class="ni">📅</span>Программа</button>
+    <button class="ntab" data-tab="progress"><span class="ni">📈</span>Прогресс</button>
+    <button class="ntab" data-tab="ref"><span class="ni">📖</span>Справка</button>
+  </div>
+</nav>
+
+<div class="overlay" id="timerOverlay"></div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   ДАННЫЕ ПРОГРАММЫ
+===================================================================== */
+const WARMUP=[
+  {t:'Скакалка — 2 минуты',time:120},
+  {t:'Круговые движения плечами — 10 раз в каждую сторону'},
+  {t:'Вис на турнике — 20 секунд',time:20},
+  {t:'Отжимания — 10 раз'},
+  {t:'3 медленных подтягивания с резинкой (активация рабочих мышц)'}
+];
+const COOLDOWN=[
+  {t:'Вис на турнике — 30 сек × 3',time:30},
+  {t:'Растяжка широчайших (тянешься одной рукой в сторону)'},
+  {t:'Растяжка бицепса и грудных у стены'}
+];
+
+/* kind: reps | time | max | pyramid | cluster
+   pull:true — считается в объём подтягиваний
+   perSide — «на каждую руку/сторону» */
+const PROGRAM=[
+{
+  id:1,name:'База',weeks:[1,3],icon:'🧱',
+  desc:'Научить тело делать много повторений с помощью резинки и построить объём.',
+  gtg:{pct:.5,pctLabel:'50%',hint:'6–8 подходов за день',maxSets:8,
+    desc:'Метод «смазывания навыка»: в течение дня подходишь к турнику и делаешь 50% от максимума. Не до отказа, без напряга. Между подходами минимум 30 минут — это тренирует нервную систему без утомления мышц.'},
+  days:{
+    1:{title:'Объём',ex:[
+      {name:'Подтягивания прямым хватом с резинкой',sets:5,reps:8,rest:120,pull:1,
+       tip:'Хват прямой — ладони от себя, руки на ширине плеч. Внизу полное разгибание, наверху подбородок чётко над перекладиной.'},
+      {name:'Австралийские подтягивания',sets:3,reps:12,rest:90,pull:1,
+       tip:'Низкий турник или стол/стул: ноги на земле, тянешь грудь к перекладине под углом.'},
+      {name:'Тяга гантели в наклоне 15 кг',sets:3,reps:10,rest:90,perSide:1,
+       tip:'Наклон корпуса ~45°, тянешь гантель к поясу. Каждой рукой.'},
+      {name:'Планка',sets:3,kind:'time',time:45,rest:60,
+       tip:'Корпус в одну линию, пресс напряжён.'}
+    ]},
+    3:{title:'Сила',ex:[
+      {name:'Негативы без резинки',sets:5,reps:3,rest:120,pull:1,
+       tip:'Запрыгиваешь наверх (подбородок над перекладиной) и опускаешься максимально медленно — 5–7 секунд.'},
+      {name:'Подтягивания обратным хватом с резинкой',sets:4,reps:6,rest:120,pull:1,
+       tip:'Ладони к себе — больше включается бицепс, обычно легче.'},
+      {name:'Сгибания на бицепс с гантелей',sets:3,reps:10,rest:60,perSide:1,
+       tip:'Каждой рукой, без раскачки корпуса.'},
+      {name:'Скакалка — интервалы',sets:5,kind:'time',time:60,rest:30,
+       tip:'5 раундов по 1 минуте, отдых 30 секунд.'}
+    ]},
+    5:{title:'Тест + добивка',test:1,ex:[
+      {name:'МАКСИМУМ чистых подтягиваний без резинки',sets:1,kind:'max',rest:180,pull:1,test:1,
+       tip:'Один подход на максимум. Только чистые повторы — без рывков и киппинга. Запиши цифру!'},
+      {name:'Подтягивания с резинкой',sets:4,reps:8,rest:120,pull:1,
+       tip:'Прямой хват, полная амплитуда.'},
+      {name:'Планка боковая',sets:6,kind:'time',time:30,rest:30,
+       tip:'3 подхода по 30 сек на каждую сторону — чередуй стороны (всего 6 отрезков).'},
+      {name:'Тяга гантели одной рукой',sets:3,reps:12,rest:90,perSide:1,
+       tip:'Каждой рукой, спина ровная.'}
+    ]}
+  }
+},
+{
+  id:2,name:'Сила',weeks:[4,7],icon:'⚡',
+  desc:'Уменьшаем помощь резинки: складывай её вдвое или бери за более натянутый конец. Если складывать нельзя — меньше повторений без неё, больше негативов.',
+  gtg:{pct:.55,pctLabel:'50–60%',hint:'8–10 подходов за день',maxSets:10,
+    desc:'Теперь 50–60% от максимума, 8–10 подходов за день. Между подходами минимум 30 минут.'},
+  days:{
+    1:{title:'Тяжёлые подходы',ex:[
+      {name:'Подтягивания без резинки — до отказа',sets:6,kind:'max',rest:180,pull:1,
+       tip:'6 подходов, в каждом — сколько сможешь чисто. Отдых 3 минуты. Записывай повторы в каждом подходе.'},
+      {name:'Подтягивания с резинкой (пониженная помощь)',sets:3,reps:6,rest:120,pull:1,
+       tip:'Резинка сложена вдвое или натянутый конец — помощь меньше.'},
+      {name:'Тяга гантели',sets:4,reps:8,rest:90,perSide:1,
+       tip:'Каждой рукой, тянешь к поясу.'},
+      {name:'Отжимания — до отказа',sets:3,kind:'max',rest:90,
+       tip:'3 подхода на максимум чистых отжиманий.'}
+    ]},
+    3:{title:'Взрывная сила',ex:[
+      {name:'Взрывные подтягивания',sets:5,reps:3,rest:150,pull:1,
+       tip:'Тянешься максимально быстро вверх, стараясь оторвать грудь от перекладины. Опускание медленное.'},
+      {name:'Негативы — 7 секунд опускания',sets:4,reps:5,rest:120,pull:1,
+       tip:'Запрыгнул наверх — опускаешься 7 секунд.'},
+      {name:'Подтягивания узким хватом с резинкой',sets:3,reps:5,rest:120,pull:1,
+       tip:'Ладони близко друг к другу.'},
+      {name:'Скакалка — 8 минут интервалами',sets:1,kind:'time',time:480,rest:0,
+       tip:'30 секунд быстро / 30 секунд медленно, всего 8 минут.'}
+    ]},
+    5:{title:'Тест + объём',test:1,ex:[
+      {name:'МАКСИМУМ без резинки',sets:2,kind:'max',rest:300,pull:1,test:1,
+       tip:'2 подхода на максимум с отдыхом 5 минут. Запиши лучший результат!'},
+      {name:'Австралийские подтягивания',sets:4,reps:15,rest:90,pull:1,
+       tip:'Грудь к перекладине, корпус жёсткий.'},
+      {name:'Сгибания на бицепс',sets:4,reps:10,rest:60,perSide:1,
+       tip:'Каждой рукой.'},
+      {name:'Планка',sets:3,kind:'time',time:60,rest:60,
+       tip:'3 подхода по 60 секунд.'}
+    ]}
+  }
+},
+{
+  id:3,name:'Пик',weeks:[8,10],icon:'🔥',
+  desc:'Цель — выжать максимум. Убираем резинку почти везде.',
+  gtg:{pct:.45,pctLabel:'40–50%',hint:'максимум 5 подходов за день',maxSets:5,
+    desc:'Лёгкий GTG: максимум 5 подходов по 40–50% за день. Восстановление важнее.'},
+  days:{
+    1:{title:'Пирамида',ex:[
+      {name:'Пирамида подтягиваний (без резинки)',kind:'pyramid',pull:1,
+       tip:'Повторы растут, потом падают: 1-2-3-4-5-4-3-2-1. Отдых между подходами = число повторений следующего подхода в минутах. Если не тянешь высокие числа — остановись на своём максимуме и иди обратно вниз.'}
+    ]},
+    3:{title:'Кластеры',ex:[
+      {name:'Кластеры 3+3+3 (без резинки)',sets:5,kind:'cluster',reps:9,rest:180,pull:1,
+       tip:'Один «тяжёлый» сет разбит на мини-подходы: 3 повтора → 20 сек отдых → 3 → 20 сек → 3. Между кластерами 3 минуты.'},
+      {name:'Негативы — 8 секунд опускания',sets:3,reps:5,rest:120,pull:1,
+       tip:'Максимально медленное опускание, 8 секунд.'},
+      {name:'Тяга гантели',sets:3,reps:10,rest:90,perSide:1,
+       tip:'Каждой рукой.'}
+    ]},
+    5:{title:'Тест',test:1,ex:[
+      {name:'МАКСИМУМ без резинки',sets:2,kind:'max',rest:600,pull:1,test:1,
+       tip:'1 подход — всё, что можешь. Отдых 10 минут. Ещё 1 подход на максимум.'},
+      {name:'Заминка: австралийские подтягивания',sets:3,reps:10,rest:60,pull:1,
+       tip:'Лёгкий темп, полная амплитуда.'}
+    ]}
+  }
+}];
+
+const DAY_NAMES=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+const DAY_FULL=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+const REST_DAYS_TIP='День отдыха: можно ходить пешком, лёгкая скакалка 5 минут. Никакой силовой. Если есть массажный ролик или теннисный мяч — раскатай широчайшие и грудные 5 минут.';
+
+/* =====================================================================
+   ХРАНИЛИЩЕ
+===================================================================== */
+const LS_KEY='pullup_app_v1';
+let db=loadDB();
+function loadDB(){
+  try{const d=JSON.parse(localStorage.getItem(LS_KEY));if(d&&d.settings)return d;}catch(e){}
+  return null;
+}
+function freshDB(startDate,max){
+  return {settings:{startDate,currentMax:max,startMax:max,sound:true,vibro:true},
+    workouts:{},gtg:{},tests:[]};
+}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(db));}
+
+/* =====================================================================
+   УТИЛИТЫ
+===================================================================== */
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function ymd(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+function parseYmd(s){const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c);}
+function todayStr(){return ymd(new Date());}
+function fmtShort(s){const d=parseYmd(s);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0');}
+function fmtLong(s){const d=parseYmd(s);return d.getDate()+' '+['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'][d.getMonth()];}
+function fmtMMSS(sec){sec=Math.max(0,Math.round(sec));const m=Math.floor(sec/60),s=sec%60;return m+':'+String(s).padStart(2,'0');}
+function plural(n,f){ // f=['подход','подхода','подходов']
+  const m=Math.abs(n)%100,u=m%10;
+  if(m>10&&m<20)return f[2]; if(u>1&&u<5)return f[1]; if(u===1)return f[0]; return f[2];
+}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200);}
+
+/* Неделя программы: 1..10; ≤0 — до старта; >10 — программа пройдена */
+function weekOf(dateStr){
+  const diff=Math.floor((parseYmd(dateStr)-parseYmd(db.settings.startDate))/86400000);
+  return Math.floor(diff/7)+1;
+}
+function phaseOfWeek(w){
+  if(w<1)return PROGRAM[0];
+  for(const p of PROGRAM)if(w<=p.weeks[1])return p;
+  return PROGRAM[2];
+}
+function gtgReps(pct){return Math.max(1,Math.round((db.settings.currentMax||1)*pct));}
+
+/* Звук + вибрация */
+let audioCtx=null;
+function beep(times=1){
+  if(!db.settings.sound)return;
+  try{
+    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+    for(let i=0;i<times;i++){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.type='sine';o.frequency.value=880;
+      const t0=audioCtx.currentTime+i*0.35;
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.exponentialRampToValueAtTime(0.4,t0+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+0.28);
+      o.start(t0);o.stop(t0+0.3);
+    }
+  }catch(e){}
+}
+function vibrate(pat){if(db.settings.vibro&&navigator.vibrate)try{navigator.vibrate(pat)}catch(e){}}
+
+/* Wake Lock — экран не гаснет во время тренировки */
+let wakeLock=null;
+async function keepAwake(){
+  try{if('wakeLock'in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release',()=>{wakeLock=null});}}catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&activeTab==='today')keepAwake();});
+
+/* =====================================================================
+   ПОСТРОЕНИЕ ПОДХОДОВ
+===================================================================== */
+function pyramidSeq(){
+  const peak=Math.min(5,Math.max(1,db.settings.currentMax||1));
+  const seq=[];
+  for(let i=1;i<=peak;i++)seq.push(i);
+  for(let i=peak-1;i>=1;i--)seq.push(i);
+  return seq;
+}
+/* Возвращает массив подходов: {target, rest, kind, label} */
+function buildSets(ex){
+  if(ex.kind==='pyramid'){
+    const seq=pyramidSeq();
+    return seq.map((r,i)=>({target:r,rest:i<seq.length-1?seq[i+1]*60:0,kind:'reps'}));
+  }
+  const arr=[];
+  for(let i=0;i<ex.sets;i++){
+    arr.push({
+      target:ex.kind==='time'?ex.time:(ex.kind==='max'?null:ex.reps),
+      rest:ex.rest,kind:ex.kind||'reps'
+    });
+  }
+  return arr;
+}
+function exMetaLabel(ex){
+  if(ex.kind==='pyramid'){const s=pyramidSeq();return s.join('-');}
+  if(ex.kind==='cluster')return ex.sets+' × (3+3+3)';
+  if(ex.kind==='time')return ex.sets+' × '+(ex.time>=90?fmtMMSS(ex.time):ex.time+' сек');
+  if(ex.kind==='max')return ex.sets+' × макс';
+  return ex.sets+' × '+ex.reps+(ex.perSide?' (кажд.)':'');
+}
+
+/* =====================================================================
+   ЛОГ ТРЕНИРОВКИ
+===================================================================== */
+function getWorkoutLog(date){return db.workouts[date]||null;}
+function ensureLog(date,phase,dow){
+  let w=db.workouts[date];
+  const key='p'+phase.id+'d'+dow;
+  if(!w||w.key!==key){
+    w={key,phase:phase.id,dow,startedAt:null,finishedAt:null,note:'',
+       warm:WARMUP.map(()=>false),cool:COOLDOWN.map(()=>false),
+       ex:phase.days[dow].ex.map(()=>[])};
+    db.workouts[date]=w;
+  }
+  return w;
+}
+
+/* =====================================================================
+   ТАЙМЕР (оверлей)
+===================================================================== */
+const TO=$('#timerOverlay');
+let timerState=null;
+function stopTimer(){if(timerState){clearInterval(timerState.iv);timerState=null;}TO.classList.remove('show');TO.innerHTML='';}
+function ringSVG(frac){
+  const R=112,C=2*Math.PI*R;
+  return `<svg viewBox="0 0 240 240" width="240" height="240">
+    <circle cx="120" cy="120" r="${R}" fill="none" stroke="var(--card3)" stroke-width="10"/>
+    <circle cx="120" cy="120" r="${R}" fill="none" stroke="${frac>0.25?'var(--blue)':'var(--orange)'}" stroke-width="10"
+      stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-frac)}"/>
+  </svg>`;
+}
+/* Отсчёт: label, seconds, mode('rest'|'work-timer'), sub, onDone */
+function startCountdown(opts){
+  stopTimer();
+  const st={total:opts.seconds,left:opts.seconds,opts};
+  timerState=st;
+  TO.classList.add('show');
+  function paint(){
+    TO.innerHTML=`
+      <div class="tlabel">${opts.label}</div>
+      <div class="tring">${ringSVG(st.left/st.total)}<div class="tclock">${fmtMMSS(st.left)}</div></div>
+      ${opts.sub?`<div class="tsub">${opts.sub}</div>`:''}
+      <div class="tbtns">
+        ${opts.mode==='rest'?`<button class="btn" id="tMinus">−30 сек</button><button class="btn" id="tPlus">+30 сек</button>`:''}
+        <button class="btn primary" id="tSkip">${opts.mode==='rest'?'Пропустить':'Готово'}</button>
+      </div>`;
+    const done=()=>{const cb=opts.onDone;stopTimer();cb&&cb();};
+    $('#tSkip').onclick=done;
+    if(opts.mode==='rest'){
+      $('#tMinus').onclick=()=>{st.left=Math.max(1,st.left-30);st.total=Math.max(st.total,st.left);tick(false);};
+      $('#tPlus').onclick=()=>{st.left+=30;st.total=Math.max(st.total,st.left);tick(false);};
+    }
+  }
+  function tick(dec=true){
+    if(!timerState)return;
+    if(dec)st.left--;
+    if(st.left<=0){
+      beep(3);vibrate([200,100,200,100,400]);
+      const cb=opts.onDone;stopTimer();
+      if(opts.doneMsg)toast(opts.doneMsg);
+      cb&&cb();return;
+    }
+    if(st.left<=3&&dec){beep(1);vibrate(80);}
+    const clock=TO.querySelector('.tclock'),ring=TO.querySelector('.tring');
+    if(clock)clock.textContent=fmtMMSS(st.left);
+    if(ring)ring.firstElementChild.outerHTML=ringSVG(st.left/st.total);
+  }
+  paint();
+  st.iv=setInterval(tick,1000);
+}
+/* Экран «работа» без отсчёта (для кластеров): жми Готово когда сделал */
+function workScreen(label,sub,onDone){
+  stopTimer();
+  TO.classList.add('show');
+  TO.innerHTML=`
+    <div class="big-emoji">💪</div>
+    <div class="tclock" style="font-size:2.2rem;margin:16px 0 6px">${label}</div>
+    ${sub?`<div class="tsub">${sub}</div>`:''}
+    <div class="tbtns"><button class="btn ghost" id="tCancel">Отмена</button><button class="btn good" id="tOk">Сделал ✓</button></div>`;
+  $('#tOk').onclick=()=>{stopTimer();onDone(true);};
+  $('#tCancel').onclick=()=>{stopTimer();onDone(false);};
+}
+
+/* =====================================================================
+   МОДАЛКИ
+===================================================================== */
+const MB=$('#modalBg'),MX=$('#modalBox');
+function openModal(html){MX.innerHTML=html;MB.classList.add('show');}
+function closeModal(){MB.classList.remove('show');MX.innerHTML='';}
+MB.addEventListener('click',e=>{if(e.target===MB)closeModal();});
+
+/* Степпер повторов */
+function repsModal(title,initial,onSave,opts={}){
+  let v=initial;
+  openModal(`
+    <h3>${esc(title)}</h3>
+    ${opts.sub?`<div class="sub" style="margin-bottom:10px">${opts.sub}</div>`:''}
+    <div class="stepper" style="margin:18px 0">
+      <button id="rMinus">−</button><div class="sv" id="rVal">${v}</div><button id="rPlus">+</button>
+    </div>
+    <div class="row">
+      ${opts.onDelete?'<button class="btn danger" id="rDel">Удалить</button>':''}
+      <button class="btn ghost" id="rCancel">Отмена</button>
+      <button class="btn primary" id="rSave">Сохранить</button>
+    </div>`);
+  $('#rMinus').onclick=()=>{v=Math.max(0,v-1);$('#rVal').textContent=v;};
+  $('#rPlus').onclick=()=>{v++;$('#rVal').textContent=v;};
+  $('#rCancel').onclick=closeModal;
+  $('#rSave').onclick=()=>{closeModal();onSave(v);};
+  if(opts.onDelete)$('#rDel').onclick=()=>{closeModal();opts.onDelete();};
+}
+
+/* Форма результата теста */
+function testModal(prefReps){
+  const last=db.tests[db.tests.length-1];
+  let feel=3;
+  openModal(`
+    <h3>🏆 Результат пятничного теста</h3>
+    <div class="f"><label>Дата</label><input type="date" id="tfDate" value="${todayStr()}"></div>
+    <div class="f"><label>Максимум чистых подтягиваний</label><input type="number" id="tfReps" inputmode="numeric" value="${prefReps??''}" placeholder="например, 4"></div>
+    <div class="f"><label>Вес утром натощак, кг (необязательно)</label><input type="number" id="tfW" inputmode="decimal" step="0.1" value="${last&&last.weight?last.weight:''}" placeholder="например, 64.5"></div>
+    <div class="f"><label>Самочувствие (сон, боль в мышцах, энергия)</label>
+      <div class="feelrow" id="tfFeel">
+        ${['😵','😕','😐','🙂','🔥'].map((e,i)=>`<button data-f="${i+1}" ${i===2?'class="on"':''}>${e}</button>`).join('')}
+      </div></div>
+    <div class="f"><label>Заметка</label><textarea id="tfNote" placeholder="Как прошёл тест, что болит, как спал…"></textarea></div>
+    <div class="row"><button class="btn ghost" id="tfCancel">Отмена</button><button class="btn primary" id="tfSave">Сохранить</button></div>`);
+  MX.querySelectorAll('#tfFeel button').forEach(b=>b.onclick=()=>{
+    MX.querySelectorAll('#tfFeel button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');feel=+b.dataset.f;});
+  $('#tfCancel').onclick=closeModal;
+  $('#tfSave').onclick=()=>{
+    const reps=parseInt($('#tfReps').value,10);
+    if(isNaN(reps)||reps<0){toast('Укажи количество повторов');return;}
+    const rec={date:$('#tfDate').value||todayStr(),reps,
+      weight:parseFloat($('#tfW').value)||null,feel,note:$('#tfNote').value.trim()};
+    db.tests.push(rec);
+    db.tests.sort((a,b)=>a.date<b.date?-1:1);
+    if(reps>db.settings.currentMax){db.settings.currentMax=reps;toast('Новый рекорд: '+reps+'! Максимум обновлён 🎉');}
+    else toast('Результат сохранён');
+    save();closeModal();render();
+  };
+}
+
+/* Настройки */
+function settingsModal(){
+  const s=db.settings;
+  openModal(`
+    <h3>⚙️ Настройки</h3>
+    <div class="f"><label>Дата начала программы (понедельник недели 1)</label>
+      <input type="date" id="sfStart" value="${s.startDate}"></div>
+    <div class="f"><label>Текущий максимум подтягиваний</label>
+      <input type="number" id="sfMax" inputmode="numeric" value="${s.currentMax}"></div>
+    <div class="f"><label class="chk ${s.sound?'on':''}" id="sfSound" style="border:0"><span class="box">${s.sound?'✓':''}</span><span class="cl">Звук таймера</span></label>
+      <label class="chk ${s.vibro?'on':''}" id="sfVibro" style="border:0"><span class="box">${s.vibro?'✓':''}</span><span class="cl">Вибрация</span></label></div>
+    <hr class="sep">
+    <div class="row" style="margin:10px 0">
+      <button class="btn sm" id="sfExport">⬇️ Экспорт данных</button>
+      <button class="btn sm" id="sfImport">⬆️ Импорт</button>
+    </div>
+    <input type="file" id="sfFile" accept=".json" style="display:none">
+    <button class="btn danger sm" id="sfReset" style="width:100%">Сбросить все данные…</button>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="sfSave">Сохранить</button></div>`);
+  const tgl=(id,key)=>{$( '#'+id).onclick=e=>{e.preventDefault();s[key]=!s[key];const el=$('#'+id);el.classList.toggle('on',s[key]);el.querySelector('.box').textContent=s[key]?'✓':'';};};
+  tgl('sfSound','sound');tgl('sfVibro','vibro');
+  $('#sfExport').onclick=()=>{
+    const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='pullup_backup_'+todayStr()+'.json';a.click();toast('Файл с данными скачан');
+  };
+  $('#sfImport').onclick=()=>$('#sfFile').click();
+  $('#sfFile').onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{try{const d=JSON.parse(r.result);
+      if(!d.settings||!d.settings.startDate)throw 0;
+      db=d;save();closeModal();render();toast('Данные восстановлены');}
+      catch(err){toast('Не удалось прочитать файл');}};
+    r.readAsText(f);
+  };
+  $('#sfReset').onclick=()=>{
+    if(confirm('Точно удалить ВСЕ данные (тренировки, тесты, прогресс)? Это необратимо.')){
+      localStorage.removeItem(LS_KEY);location.reload();
+    }};
+  $('#sfSave').onclick=()=>{
+    s.startDate=$('#sfStart').value||s.startDate;
+    const m=parseInt($('#sfMax').value,10);
+    if(!isNaN(m)&&m>=0)s.currentMax=m;
+    save();closeModal();render();toast('Сохранено');
+  };
+}
+
+/* Онбординг */
+function onboarding(){
+  const d=new Date();
+  const dow=d.getDay(); // 0=вс
+  const monday=new Date(d);
+  monday.setDate(d.getDate()+((dow===1)?0:((8-dow)%7))); // ближайший пн (сегодня, если пн)
+  openModal(`
+    <h3>💪 Добро пожаловать!</h3>
+    <div class="txt" style="margin-bottom:6px">10-недельная программа подтягиваний: <b>База → Сила → Пик</b>. Пара вопросов для настройки:</div>
+    <div class="f"><label>Сколько чистых подтягиваний без резинки можешь сейчас?</label>
+      <input type="number" id="obMax" inputmode="numeric" value="2"></div>
+    <div class="f"><label>Дата начала (понедельник недели 1)</label>
+      <input type="date" id="obStart" value="${ymd(monday)}"></div>
+    <div class="sub" style="margin-bottom:12px">От максимума считаются GTG-подходы и пирамида. Обновляется автоматически после каждого пятничного теста.</div>
+    <button class="btn primary" id="obGo">Начать программу 🚀</button>`);
+  $('#obGo').onclick=()=>{
+    const m=Math.max(0,parseInt($('#obMax').value,10)||0);
+    db=freshDB($('#obStart').value||ymd(monday),m);
+    save();closeModal();render();
+  };
+}
+
+/* =====================================================================
+   ВКЛАДКА «СЕГОДНЯ»
+===================================================================== */
+let activeTab='today';
+let viewDate=todayStr(); // какой день недели показываем (можно листать в пределах текущей недели)
+
+function headerInfo(){
+  const w=weekOf(todayStr());
+  const p=phaseOfWeek(w);
+  if(w<1)$('#hSub').textContent='Старт '+fmtLong(db.settings.startDate);
+  else if(w>10)$('#hSub').textContent='Программа пройдена · поддерживающий режим';
+  else $('#hSub').textContent='Неделя '+w+' из 10 · Фаза '+p.id+' «'+p.name+'» '+p.icon;
+}
+
+function weekStripHTML(){
+  const t=parseYmd(viewDate);
+  const monday=new Date(t);monday.setDate(t.getDate()-((t.getDay()+6)%7));
+  let html='<div class="wstrip">';
+  for(let i=0;i<7;i++){
+    const d=new Date(monday);d.setDate(monday.getDate()+i);
+    const ds=ymd(d),dow=d.getDay();
+    const w=db.workouts[ds],g=db.gtg[ds];
+    const isWork=[1,3,5].includes(dow),isGtg=dow===0;
+    let icon='·';
+    if(isWork)icon=w&&w.finishedAt?'✅':'🏋️';
+    else if(isGtg)icon=(g&&g.length)?'✅':'🔁';
+    else icon='😴';
+    const cls=['wday',ds===todayStr()?'today':'',(w&&w.finishedAt)||(isGtg&&g&&g.length)?'done':''].join(' ');
+    html+=`<div class="${cls}" data-goto="${ds}"><div class="dn">${DAY_NAMES[dow]}</div><div class="di">${icon}</div></div>`;
+  }
+  return html+'</div>';
+}
+
+function renderToday(){
+  const V=$('#view');
+  const w=weekOf(viewDate);
+  const d=parseYmd(viewDate),dow=d.getDay();
+  const isToday=viewDate===todayStr();
+  let html=weekStripHTML();
+
+  const wTotal=Math.min(Math.max(w,0),10);
+  html+=`<div class="card" style="padding:12px 16px">
+    <div class="spread"><span class="sub"><b style="color:var(--ink)">${DAY_FULL[dow]}, ${fmtLong(viewDate)}</b>${isToday?'':' (не сегодня)'}</span>
+    <span class="sub">${w>=1&&w<=10?'нед. '+w+'/10':''}</span></div>
+    <div class="pbar"><div style="width:${wTotal*10}%"></div></div>
+  </div>`;
+
+  if(w<1){
+    html+=`<div class="banner">Программа начнётся <b>${fmtLong(db.settings.startDate)}</b>. А пока изучи вкладки «Программа» и «Справка» — или начни прямо сегодня (кнопка ниже).</div>
+    <button class="btn primary" id="startNow">Начать программу сегодня</button>`;
+    V.innerHTML=html;bindWeekStrip();
+    $('#startNow').onclick=()=>{
+      const t=new Date();const mon=new Date(t);mon.setDate(t.getDate()-((t.getDay()+6)%7));
+      db.settings.startDate=ymd(mon);save();render();toast('Погнали! Неделя 1 началась');
+    };
+    return;
+  }
+
+  const phase=phaseOfWeek(w);
+  if(w>10){
+    html+=`<div class="banner good">🎉 <b>10 недель позади!</b> Программа завершена. Ниже — тренировки фазы «Пик» в поддерживающем режиме. Продолжай пятничные тесты и записывай результаты.</div>`;
+  }
+
+  if(dow===0){ // GTG
+    html+=gtgHTML(phase);
+    V.innerHTML=html;bindWeekStrip();bindGtg(phase);return;
+  }
+  if(![1,3,5].includes(dow)){ // отдых
+    html+=`<div class="card center" style="padding:28px 16px">
+      <div class="big-emoji">😴</div>
+      <h3 style="margin-top:10px">День отдыха</h3>
+      <div class="txt" style="margin-top:8px">${REST_DAYS_TIP}</div>
+      <div class="sub" style="margin-top:12px">Восстановление — это где ты реально растёшь. Сон 8 часов, ложись до 23:00.</div>
+    </div>`;
+    V.innerHTML=html;bindWeekStrip();return;
+  }
+
+  /* Тренировочный день */
+  const day=phase.days[dow];
+  const log=ensureLog(viewDate,phase,dow);save();
+  const finished=!!log.finishedAt;
+
+  html+=`<div class="card" style="border-color:rgba(57,135,229,.4)">
+    <div class="spread">
+      <div><span class="pill blue">Фаза ${phase.id} · ${phase.name}</span></div>
+      ${day.test?'<span class="pill orange">День теста</span>':''}
+    </div>
+    <h3 style="font-size:1.25rem;margin-top:8px">${phase.icon} ${esc(day.title)}</h3>
+    <div class="sub" style="margin-top:4px">${esc(phase.desc)}</div>
+  </div>`;
+
+  if(finished){
+    html+=`<div class="banner good">✅ <b>Тренировка завершена!</b> ${summaryLine(log)} Не забудь растяжку и 2,5–3 литра воды за день.</div>`;
+  }
+
+  /* Разминка */
+  const warmDone=log.warm.filter(Boolean).length;
+  html+=`<details class="acc" ${warmDone<WARMUP.length&&!finished?'open':''}>
+    <summary>🔥 Разминка (5–7 минут) <span class="arr">▼</span><span class="pill ${warmDone===WARMUP.length?'green':''}" style="margin-left:auto">${warmDone}/${WARMUP.length}</span></summary>
+    <div class="accbody">${WARMUP.map((it,i)=>`
+      <div class="chk ${log.warm[i]?'on':''}" data-warm="${i}">
+        <span class="box">${log.warm[i]?'✓':''}</span><span class="cl">${esc(it.t)}</span>
+        ${it.time?`<button class="btn sm" data-wtimer="${i}" style="flex:0 0 auto">⏱ ${it.time>=60?fmtMMSS(it.time):it.time+'с'}</button>`:''}
+      </div>`).join('')}
+    </div></details>`;
+
+  /* Упражнения */
+  day.ex.forEach((ex,ei)=>{
+    const sets=buildSets(ex);
+    const done=log.ex[ei]||[];
+    const allDone=done.length>=sets.length;
+    const nextIdx=done.length;
+    html+=`<div class="excard ${allDone?'done-all':''}">
+      <div class="exhead">
+        <div class="exname">${ei+1}. ${esc(ex.name)}</div>
+        <div class="exmeta">${exMetaLabel(ex)}</div>
+      </div>
+      <div class="extip">${esc(ex.tip||'')}</div>
+      <div class="sets">${sets.map((s,si)=>{
+        const isDone=si<done.length;
+        const val=isDone?done[si].r:(s.kind==='time'?(s.target>=60?fmtMMSS(s.target):s.target+'"'):(s.kind==='max'?'MAX':s.target));
+        const smallLbl=s.kind==='time'?(isDone?'сек':''):(s.kind==='cluster'?'3+3+3':'');
+        return `<button class="setbtn ${isDone?'done':''} ${si===nextIdx&&!allDone?'next':''}" data-set="${ei}:${si}">
+          ${isDone&&s.kind==='time'?done[si].r+'"':val}${smallLbl?`<small>${smallLbl}</small>`:''}
+        </button>`;
+      }).join('')}</div>
+      ${ex.rest?`<div class="exfoot">Отдых между подходами: ${fmtMMSS(ex.kind==='pyramid'?0:ex.rest)}${ex.kind==='pyramid'?'по пирамиде: минуты = повторы следующего подхода':''}</div>`:''}
+      ${allDone?'<div class="exfoot" style="color:var(--green);font-weight:700">✓ Упражнение выполнено</div>':''}
+    </div>`;
+  });
+
+  /* Тестовое напоминание */
+  if(day.test){
+    const best=bestTestToday(log,day);
+    const already=db.tests.some(t=>t.date===viewDate);
+    html+=`<div class="banner warn">📓 <b>Пятница — день замера.</b> После теста запиши результат: максимум, вес утром, самочувствие.${already?' <b>Запись за сегодня уже есть ✓</b>':''}
+      <button class="btn sm" id="openTest" style="margin-top:10px">${already?'Добавить ещё запись':'Записать результат теста'}${best?' ('+best+')':''}</button></div>`;
+  }
+
+  /* Заминка */
+  const coolDone=log.cool.filter(Boolean).length;
+  html+=`<details class="acc">
+    <summary>🧘 Растяжка после тренировки <span class="arr">▼</span><span class="pill ${coolDone===COOLDOWN.length?'green':''}" style="margin-left:auto">${coolDone}/${COOLDOWN.length}</span></summary>
+    <div class="accbody">${COOLDOWN.map((it,i)=>`
+      <div class="chk ${log.cool[i]?'on':''}" data-cool="${i}">
+        <span class="box">${log.cool[i]?'✓':''}</span><span class="cl">${esc(it.t)}</span>
+      </div>`).join('')}
+    </div></details>`;
+
+  /* Заметка + завершение */
+  html+=`<div class="card">
+    <div class="f" style="margin:0"><label>Заметка к тренировке</label>
+    <textarea id="wNote" placeholder="Как самочувствие, что было тяжело…">${esc(log.note||'')}</textarea></div>
+  </div>`;
+  if(!finished){
+    html+=`<button class="btn good" id="finishBtn" style="margin:4px 0 10px">🏁 Завершить тренировку</button>`;
+  }else{
+    html+=`<button class="btn ghost sm" id="unfinishBtn" style="margin:4px 0 10px">Продолжить редактирование</button>`;
+  }
+
+  V.innerHTML=html;
+  bindWeekStrip();
+  keepAwake();
+
+  /* --- обработчики --- */
+  V.querySelectorAll('[data-warm]').forEach(el=>el.onclick=e=>{
+    if(e.target.closest('[data-wtimer]'))return;
+    const i=+el.dataset.warm;log.warm[i]=!log.warm[i];touchStart(log);save();renderToday();
+  });
+  V.querySelectorAll('[data-wtimer]').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();const i=+b.dataset.wtimer;
+    startCountdown({label:WARMUP[i].t,seconds:WARMUP[i].time,mode:'work-timer',doneMsg:'Готово!',
+      onDone:()=>{log.warm[i]=true;touchStart(log);save();renderToday();}});
+  });
+  V.querySelectorAll('[data-cool]').forEach(el=>el.onclick=()=>{
+    const i=+el.dataset.cool;log.cool[i]=!log.cool[i];save();renderToday();
+  });
+  V.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>{
+    const[ei,si]=b.dataset.set.split(':').map(Number);
+    handleSetTap(log,phase,dow,ei,si);
+  });
+  const note=$('#wNote');
+  if(note)note.onchange=()=>{log.note=note.value;save();};
+  const fb=$('#finishBtn');
+  if(fb)fb.onclick=()=>{
+    log.finishedAt=Date.now();touchStart(log);save();renderToday();
+    beep(3);vibrate([100,80,100,80,300]);
+  };
+  const ub=$('#unfinishBtn');
+  if(ub)ub.onclick=()=>{log.finishedAt=null;save();renderToday();};
+  const ot=$('#openTest');
+  if(ot)ot.onclick=()=>testModal(bestTestToday(log,day));
+}
+
+function touchStart(log){if(!log.startedAt)log.startedAt=Date.now();}
+function bestTestToday(log,day){
+  let best=null;
+  day.ex.forEach((ex,ei)=>{if(ex.test)(log.ex[ei]||[]).forEach(s=>{if(best===null||s.r>best)best=s.r;});});
+  return best;
+}
+function summaryLine(log){
+  const sets=log.ex.reduce((a,e)=>a+e.length,0);
+  const vol=log.ex.reduce((a,e)=>a+e.reduce((x,s)=>x+(s.p?s.r:0),0),0);
+  const dur=log.startedAt&&log.finishedAt?Math.round((log.finishedAt-log.startedAt)/60000):null;
+  return sets+' '+plural(sets,['подход','подхода','подходов'])+(vol?', '+vol+' тяговых повторов':'')+(dur?', '+dur+' мин':'')+'.';
+}
+
+/* Нажатие на кружок подхода */
+function handleSetTap(log,phase,dow,ei,si){
+  const ex=phase.days[dow].ex[ei];
+  const sets=buildSets(ex);
+  const done=log.ex[ei];
+  const dateOfLog=viewDate;
+
+  if(si<done.length){ // уже выполнен → редактирование
+    const s=done[si];
+    repsModal('Подход '+(si+1)+': '+(sets[si].kind==='time'?'секунды':'повторы'),s.r,
+      v=>{s.r=v;save();renderToday();},
+      {onDelete:()=>{done.splice(si,1);save();renderToday();toast('Подход удалён');},
+       sub:esc(ex.name)});
+    return;
+  }
+  if(si!==done.length){toast('Сначала подход '+(done.length+1));return;}
+
+  const spec=sets[si];
+  touchStart(log);
+
+  const complete=(reps)=>{
+    done.push({r:reps,p:ex.pull?1:0,k:spec.kind});
+    save();renderToday();
+    const isLast=done.length>=sets.length;
+    if(!isLast&&spec.rest>0){
+      startCountdown({label:'Отдых · '+ex.name,seconds:spec.rest,mode:'rest',
+        sub:'Дальше: подход '+(done.length+1)+' из '+sets.length+
+            (spec.kind!=='time'?' · цель: '+(sets[done.length].target??'максимум')+(spec.kind==='cluster'?' (3+3+3)':' повт.'):''),
+        doneMsg:'Отдых окончен — работаем!'});
+    }else if(isLast){
+      toast('Упражнение выполнено ✓');beep(2);vibrate([100,60,100]);
+    }
+  };
+
+  if(spec.kind==='time'){
+    startCountdown({label:ex.name+' — держим!',seconds:spec.target,mode:'work-timer',
+      onDone:()=>complete(spec.target)});
+  }else if(spec.kind==='max'){
+    repsModal('Сколько сделал?',db.settings.currentMax||5,v=>complete(v),
+      {sub:esc(ex.name)+' — подход до отказа'});
+  }else if(spec.kind==='cluster'){
+    runCluster(ex,1,0,complete);
+  }else{
+    complete(spec.target);
+  }
+}
+/* Кластер: 3 → 20с → 3 → 20с → 3 */
+function runCluster(ex,mini,acc,onAll){
+  workScreen('Мини-подход '+mini+'/3 — 3 повтора','Кластер: 3 повтора → 20 сек отдыха → снова',ok=>{
+    if(!ok)return;
+    const total=acc+3;
+    if(mini===3){onAll(total);return;}
+    startCountdown({label:'Мини-отдых 20 сек',seconds:20,mode:'rest',
+      sub:'Дальше: мини-подход '+(mini+1)+'/3',
+      onDone:()=>runCluster(ex,mini+1,total,onAll)});
+  });
+}
+
+/* ------- GTG ------- */
+function gtgHTML(phase){
+  const g=db.gtg[viewDate]||[];
+  const target=gtgReps(phase.gtg.pct);
+  const last=g.length?g[g.length-1]:null;
+  const sinceMin=last?Math.floor((Date.now()-last.t)/60000):null;
+  const ready=sinceMin===null||sinceMin>=30;
+  let html=`<div class="card center" style="padding:24px 16px">
+    <span class="pill violet">GTG · Grease the Groove</span>
+    <div class="gtg-count" style="margin-top:14px">${g.length}<span style="font-size:1.2rem;color:var(--mut)"> / ${phase.gtg.maxSets}</span></div>
+    <div class="sub" style="margin:6px 0 4px">${plural(g.length,['подход выполнен','подхода выполнено','подходов выполнено'])} сегодня · ${phase.gtg.hint}</div>
+    <div class="txt" style="margin:10px 0"><b>${target} ${plural(target,['повтор','повтора','повторов'])}</b> за подход (${phase.gtg.pctLabel} от максимума ${db.settings.currentMax})</div>
+    ${viewDate===todayStr()?`
+      ${!ready?`<div class="banner warn" style="text-align:left">⏳ После прошлого подхода прошло <b>${sinceMin} мин</b>. Минимум между подходами — 30 минут.</div>`:''}
+      <button class="btn ${ready?'primary':''}" id="gtgAdd" style="margin-top:8px">➕ Записать подход (${target} повт.)</button>
+    `:''}
+  </div>
+  <div class="card"><h3>Как это работает</h3><div class="txt" style="margin-top:6px">${esc(phase.gtg.desc)}</div></div>`;
+  if(g.length){
+    html+=`<div class="card"><h3>Подходы за ${fmtLong(viewDate)}</h3><div class="gtg-log">${
+      g.map((s,i)=>{const d=new Date(s.t);
+        return `<div class="gtg-item"><span>#${i+1} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span><span><b>${s.r}</b> повт. <button class="del" data-gdel="${i}">✕</button></span></div>`;}).join('')
+    }</div></div>`;
+  }
+  return html;
+}
+function bindGtg(phase){
+  const add=$('#gtgAdd');
+  if(add)add.onclick=()=>{
+    const target=gtgReps(phase.gtg.pct);
+    repsModal('Сколько повторов сделал?',target,v=>{
+      db.gtg[viewDate]=db.gtg[viewDate]||[];
+      db.gtg[viewDate].push({t:Date.now(),r:v});
+      save();render();beep(1);vibrate(60);
+      toast('Подход записан. Следующий — через 30+ минут');
+    },{sub:'GTG-подход, цель '+target+' повт. Не до отказа!'});
+  };
+  document.querySelectorAll('[data-gdel]').forEach(b=>b.onclick=()=>{
+    db.gtg[viewDate].splice(+b.dataset.gdel,1);
+    if(!db.gtg[viewDate].length)delete db.gtg[viewDate];
+    save();render();
+  });
+}
+
+function bindWeekStrip(){
+  document.querySelectorAll('[data-goto]').forEach(el=>el.onclick=()=>{viewDate=el.dataset.goto;renderToday();});
+}
+
+/* =====================================================================
+   ВКЛАДКА «ПРОГРАММА»
+===================================================================== */
+let progPhase=null;
+function renderProgram(){
+  const w=weekOf(todayStr());
+  const cur=phaseOfWeek(Math.max(1,Math.min(w,10)));
+  if(progPhase===null)progPhase=cur.id;
+  const p=PROGRAM.find(x=>x.id===progPhase);
+  let html=`<div class="chips">${PROGRAM.map(x=>
+    `<button class="chip ${x.id===progPhase?'on':''}" data-ph="${x.id}">${x.icon} Фаза ${x.id}: ${x.name} (нед. ${x.weeks[0]}–${x.weeks[1]})</button>`).join('')}</div>`;
+  html+=`<div class="card"><h3>${p.icon} Фаза ${p.id} «${p.name}» — недели ${p.weeks[0]}–${p.weeks[1]}</h3>
+    <div class="txt" style="margin-top:6px">${esc(p.desc)}</div>
+    ${p.id===cur.id&&w>=1&&w<=10?'<div class="pill blue" style="margin-top:10px">Ты сейчас здесь · неделя '+w+'</div>':''}</div>`;
+
+  const dayOrder=[[1,'Понедельник'],[3,'Среда'],[5,'Пятница']];
+  dayOrder.forEach(([dow,dn])=>{
+    const day=p.days[dow];
+    html+=`<details class="acc"><summary>${dn} — ${esc(day.title)} <span class="arr">▼</span></summary>
+      <div class="accbody">${day.ex.map((ex,i)=>`
+        <div class="exline"><span class="ev">${exMetaLabel(ex)}${ex.rest&&ex.kind!=='pyramid'?' · отдых '+fmtMMSS(ex.rest):''}</span>
+        <div class="en">${i+1}. ${esc(ex.name)}</div>
+        <div class="ed">${esc(ex.tip||'')}</div></div>`).join('')}
+      </div></details>`;
+  });
+  html+=`<details class="acc"><summary>Воскресенье — GTG <span class="arr">▼</span></summary>
+    <div class="accbody"><div class="txt">${esc(p.gtg.desc)}</div>
+    <div class="sub" style="margin-top:8px">${esc(p.gtg.hint)} · ${p.gtg.pctLabel} от максимума</div></div></details>`;
+  html+=`<div class="card"><h3>🛌 Вторник, четверг, суббота — отдых</h3>
+    <div class="txt" style="margin-top:6px">${REST_DAYS_TIP}</div></div>`;
+  html+=`<div class="card"><h3>🔥 Разминка перед каждой тренировкой (5–7 мин)</h3>
+    <div class="txt"><ul>${WARMUP.map(x=>'<li>'+esc(x.t)+'</li>').join('')}</ul></div></div>`;
+
+  $('#view').innerHTML=html;
+  document.querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>{progPhase=+b.dataset.ph;renderProgram();});
+}
+
+/* =====================================================================
+   ВКЛАДКА «ПРОГРЕСС»
+===================================================================== */
+function calcStats(){
+  const s=db.settings;
+  let vol=0,workoutsDone=0,gtgSets=0,gtgVol=0;
+  for(const d in db.workouts){
+    const w=db.workouts[d];
+    if(w.finishedAt)workoutsDone++;
+    w.ex.forEach(e=>e.forEach(st=>{if(st.p)vol+=st.r;}));
+  }
+  for(const d in db.gtg){db.gtg[d].forEach(x=>{gtgSets++;gtgVol+=x.r;});}
+  const tests=db.tests;
+  const bestMax=tests.length?Math.max(...tests.map(t=>t.reps)):s.currentMax;
+  const delta=(tests.length?Math.max(bestMax,s.currentMax):s.currentMax)-(s.startMax||0);
+  /* объём по неделям программы */
+  const weekly={};
+  const addW=(dateStr,n)=>{const w=weekOf(dateStr);if(w>=1&&w<=10)weekly[w]=(weekly[w]||0)+n;};
+  for(const d in db.workouts)db.workouts[d].ex.forEach(e=>e.forEach(st=>{if(st.p)addW(d,st.r);}));
+  for(const d in db.gtg)db.gtg[d].forEach(x=>addW(d,x.r));
+  return {vol:vol+gtgVol,workoutsDone,gtgSets,delta,weekly};
+}
+
+function renderProgress(){
+  const s=db.settings,st=calcStats();
+  const w=weekOf(todayStr());
+  let html=`<div class="tiles">
+    <div class="tile"><div class="tv">${s.currentMax}</div><div class="tl">текущий максимум подтягиваний</div>
+      ${st.delta>0?`<div class="td up">+${st.delta} с начала программы</div>`:''}</div>
+    <div class="tile"><div class="tv">${st.vol}</div><div class="tl">тяговых повторов всего (тренировки + GTG)</div></div>
+    <div class="tile"><div class="tv">${st.workoutsDone}</div><div class="tl">${plural(st.workoutsDone,['тренировка завершена','тренировки завершено','тренировок завершено'])}</div></div>
+    <div class="tile"><div class="tv">${st.gtgSets}</div><div class="tl">GTG-${plural(st.gtgSets,['подход','подхода','подходов'])} за всё время</div></div>
+  </div>`;
+
+  html+=`<button class="btn primary" id="addTest">➕ Записать результат теста / вес</button>`;
+
+  /* график максимума */
+  const tp=db.tests.map(t=>({x:fmtShort(t.date),y:t.reps}));
+  html+=`<div class="card"><h3>Максимум чистых подтягиваний</h3>
+    <div class="sub">Пятничные тесты · пунктир — цель 12 к 1 октября</div>
+    ${tp.length?lineChart(tp,{color:'#3987e5',goal:12,goalLabel:'цель 12'}):emptyChart('Пройди первый пятничный тест — здесь появится график.')}</div>`;
+
+  /* график веса */
+  const wp=db.tests.filter(t=>t.weight).map(t=>({x:fmtShort(t.date),y:t.weight}));
+  html+=`<div class="card"><h3>Вес утром натощак, кг</h3>
+    <div class="sub">Ты в небольшом профиците — вес должен плавно расти</div>
+    ${wp.length?lineChart(wp,{color:'#199e70',dec:1}):emptyChart('Указывай вес при записи теста — появится график.')}</div>`;
+
+  /* объём по неделям */
+  const bars=[];for(let i=1;i<=10;i++)bars.push({x:String(i),y:st.weekly[i]||0});
+  html+=`<div class="card"><h3>Объём по неделям программы</h3>
+    <div class="sub">Тяговые повторы за неделю: подтягивания всех видов, негативы, австралийские, GTG</div>
+    ${Object.keys(st.weekly).length?barChart(bars,{color:'#3987e5'}):emptyChart('Отмечай подходы на тренировках — объём соберётся сюда.')}</div>`;
+
+  /* журнал тестов */
+  html+=`<div class="card"><h3>Журнал тестов</h3>`;
+  if(!db.tests.length)html+=`<div class="sub" style="margin-top:6px">Каждую пятницу записывай: максимум, вес, самочувствие.</div>`;
+  else html+=db.tests.slice().reverse().map((t,ri)=>{
+    const i=db.tests.length-1-ri;
+    return `<div class="hitem"><div><div class="ht">${fmtLong(t.date)} · ${['','😵','😕','😐','🙂','🔥'][t.feel||3]}</div>
+      <div class="hs">${t.weight?t.weight+' кг':''}${t.note?(t.weight?' · ':'')+esc(t.note):''}</div></div>
+      <div class="hv">${t.reps} повт.</div><button class="del" data-tdel="${i}">✕</button></div>`;
+  }).join('');
+  html+=`</div>`;
+
+  /* история тренировок */
+  const hist=Object.entries(db.workouts).filter(([,w])=>w.finishedAt||w.ex.some(e=>e.length)).sort((a,b)=>a[0]<b[0]?1:-1);
+  html+=`<div class="card"><h3>История тренировок</h3>`;
+  if(!hist.length)html+='<div class="sub" style="margin-top:6px">Здесь появятся завершённые тренировки.</div>';
+  else html+=hist.slice(0,30).map(([d,wk])=>{
+    const p=PROGRAM.find(x=>x.id===wk.phase);
+    const title=p&&p.days[wk.dow]?p.days[wk.dow].title:'Тренировка';
+    const sets=wk.ex.reduce((a,e)=>a+e.length,0);
+    const vol=wk.ex.reduce((a,e)=>a+e.reduce((x,s)=>x+(s.p?s.r:0),0),0);
+    return `<div class="hitem"><div><div class="ht">${wk.finishedAt?'✅':'⏸'} ${fmtLong(d)} · ${esc(title)}</div>
+      <div class="hs">Фаза ${wk.phase} · ${sets} ${plural(sets,['подход','подхода','подходов'])}${vol?' · '+vol+' тяговых повт.':''}${wk.note?' · «'+esc(wk.note)+'»':''}</div></div></div>`;
+  }).join('');
+  html+='</div>';
+
+  $('#view').innerHTML=html;
+  $('#addTest').onclick=()=>testModal(null);
+  document.querySelectorAll('[data-tdel]').forEach(b=>b.onclick=()=>{
+    if(confirm('Удалить эту запись теста?')){db.tests.splice(+b.dataset.tdel,1);save();renderProgress();}
+  });
+}
+
+/* ---------- графики (SVG) ---------- */
+function emptyChart(msg){return `<div class="sub center" style="padding:26px 10px;border:1px dashed var(--line2);border-radius:12px;margin-top:10px">${msg}</div>`;}
+function lineChart(pts,o){
+  const W=360,H=190,L=34,R=12,T=18,B=26;
+  const iw=W-L-R,ih=H-T-B;
+  const ys=pts.map(p=>p.y);
+  let ymax=Math.max(...ys,o.goal||0)*1.15||1,ymin=0;
+  if(o.dec){ymin=Math.min(...ys);const pad=Math.max((Math.max(...ys)-ymin)*0.3,1);ymin=Math.max(0,ymin-pad);ymax=Math.max(...ys)+pad;}
+  const X=i=>pts.length===1?L+iw/2:L+iw*i/(pts.length-1);
+  const Y=v=>T+ih*(1-(v-ymin)/(ymax-ymin));
+  const fmt=v=>o.dec?v.toFixed(o.dec):Math.round(v);
+  let g='';
+  for(let i=0;i<=3;i++){const v=ymin+(ymax-ymin)*i/3,y=Y(v);
+    g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#2c2c2a"/>
+        <text x="${L-6}" y="${y+3}" fill="#898781" font-size="9" text-anchor="end">${fmt(v)}</text>`;}
+  let goal='';
+  if(o.goal&&o.goal>ymin&&o.goal<ymax){const gy=Y(o.goal);
+    goal=`<line x1="${L}" x2="${W-R}" y1="${gy}" y2="${gy}" stroke="#898781" stroke-dasharray="5 4"/>
+      <text x="${W-R}" y="${gy-4}" fill="#898781" font-size="9" text-anchor="end">${o.goalLabel}</text>`;}
+  const path=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
+  const dots=pts.map((p,i)=>{
+    const lbl=(pts.length<=8||i===pts.length-1||p.y===Math.max(...ys))?
+      `<text x="${X(i)}" y="${Y(p.y)-9}" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">${fmt(p.y)}</text>`:'';
+    return `<circle cx="${X(i)}" cy="${Y(p.y)}" r="4" fill="${o.color}" stroke="#1a1a19" stroke-width="2"/>${lbl}`;
+  }).join('');
+  const step=Math.ceil(pts.length/6);
+  const xl=pts.map((p,i)=>i%step===0||i===pts.length-1?
+    `<text x="${X(i)}" y="${H-8}" fill="#898781" font-size="9" text-anchor="middle">${p.x}</text>`:'').join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}${goal}
+    <line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="#383835"/>
+    <path d="${path}" fill="none" stroke="${o.color}" stroke-width="2" stroke-linejoin="round"/>${dots}${xl}</svg>`;
+}
+function barChart(bars,o){
+  const W=360,H=180,L=34,R=12,T=16,B=26;
+  const iw=W-L-R,ih=H-T-B;
+  const ymax=Math.max(...bars.map(b=>b.y),1)*1.18;
+  const bw=Math.min(26,iw/bars.length-4);
+  let g='';
+  for(let i=0;i<=3;i++){const v=ymax*i/3,y=T+ih*(1-i/3);
+    g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#2c2c2a"/>
+        <text x="${L-6}" y="${y+3}" fill="#898781" font-size="9" text-anchor="end">${Math.round(v)}</text>`;}
+  const items=bars.map((b,i)=>{
+    const x=L+iw*(i+0.5)/bars.length-bw/2;
+    const h=ih*b.y/ymax,y=T+ih-h;
+    return `${b.y?`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="${o.color}"/>
+      <text x="${(x+bw/2).toFixed(1)}" y="${y-4}" fill="#c3c2b7" font-size="9" text-anchor="middle">${b.y}</text>`:''}
+      <text x="${(x+bw/2).toFixed(1)}" y="${H-8}" fill="#898781" font-size="9" text-anchor="middle">${b.x}</text>`;
+  }).join('');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}">${g}
+    <line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="#383835"/>${items}</svg>`;
+}
+
+/* =====================================================================
+   ВКЛАДКА «СПРАВКА»
+===================================================================== */
+function renderRef(){
+  $('#view').innerHTML=`
+  <details class="acc" open><summary>🍗 Питание <span class="arr">▼</span></summary><div class="accbody txt">
+    <p>Ты сухой (ИМТ ~22.5) — для роста силы нужен <b>небольшой профицит</b>: съедаешь чуть больше, чем тратишь, чтобы был материал на восстановление и рост.</p>
+    <ul>
+      <li><b>Калории:</b> 2600–2800 в день (базовый расход ~2200 + запас на тренировки и рост)</li>
+      <li><b>Белок:</b> 115–130 г — критично для мышц. Курица, яйца (2–3 в день), творог, рыба, говядина, творожный сыр</li>
+      <li><b>Углеводы:</b> 350–400 г — основа энергии. Гречка, рис, овсянка, макароны из твёрдых сортов, картошка, фрукты</li>
+      <li><b>Жиры:</b> 70–80 г. Орехи, оливковое масло, авокадо, желтки, жирная рыба</li>
+      <li><b>Вода:</b> 2,5–3 литра в день</li>
+    </ul>
+    <hr class="sep">
+    <p><b>Шаблон дня:</b></p>
+    <ul>
+      <li><b>Завтрак:</b> овсянка на молоке + 2–3 яйца + банан</li>
+      <li><b>Обед:</b> 150 г курицы/говядины + 100 г риса/гречки + овощи</li>
+      <li><b>За 1–1,5 ч до тренировки:</b> творог 200 г + мёд + орехи</li>
+      <li><b>Ужин:</b> рыба или курица + картошка/паста + овощи</li>
+      <li><b>Перед сном:</b> творог или казеин (медленный белок, кормит мышцы ночью)</li>
+    </ul>
+  </div></details>
+
+  <details class="acc"><summary>🛌 Восстановление <span class="arr">▼</span></summary><div class="accbody txt">
+    <p>Растёшь ты не на турнике, а между тренировками.</p>
+    <ul>
+      <li><b>Сон:</b> минимум 8 часов, ложись до 23:00. Каждый час недосыпа режет прогресс</li>
+      <li><b>Растяжка после каждой тренировки:</b> висы на турнике 30 сек × 3, растяжка широчайших (тянешься одной рукой в сторону), растяжка бицепса и грудных у стены</li>
+      <li><b>Дни отдыха (вт, чт, сб):</b> ходьба, лёгкая скакалка 5 минут. Никакой силовой</li>
+      <li><b>Массаж/раскатка:</b> ролик или теннисный мяч — раскатывай широчайшие и грудные 5 минут 2–3 раза в неделю</li>
+    </ul>
+  </div></details>
+
+  <details class="acc"><summary>🎯 Техника (самое важное) <span class="arr">▼</span></summary><div class="accbody txt">
+    <ul>
+      <li><b>Хват:</b> большой палец сверху перекладины («обезьяний») — лучше включает широчайшие. Больно кистям — обычный хват</li>
+      <li><b>Внизу:</b> полное разгибание рук, плечи опущены — не висеть на связках</li>
+      <li><b>Наверху:</b> подбородок чётко над перекладиной, грудь стремится к турнику</li>
+      <li><b>Корпус:</b> пресс слегка напряжён, ноги можно скрестить и подогнуть</li>
+      <li><b>Без раскачки и киппинга:</b> мах ногами — это не подтягивание, для силы бесполезен</li>
+      <li><b>Дыхание:</b> вдох внизу, выдох на подъёме</li>
+    </ul>
+  </div></details>
+
+  <details class="acc"><summary>📓 Как отслеживать прогресс <span class="arr">▼</span></summary><div class="accbody txt">
+    <p>Каждую пятницу после теста записывай во вкладке «Прогресс»:</p>
+    <ul>
+      <li>Максимум чистых повторений</li>
+      <li>Вес утром натощак</li>
+      <li>Самочувствие (сон, боль в мышцах, энергия)</li>
+    </ul>
+    <p>Раз в 2 недели смотри на графики: максимум должен расти, вес — плавно ползти вверх. Экспортируй данные в настройках, чтобы не потерять.</p>
+  </div></details>
+
+  <details class="acc"><summary>🔮 Реалистичный прогноз <span class="arr">▼</span></summary><div class="accbody txt">
+    <p>При строгом соблюдении программы: <b>12–16 подтягиваний к 1 октября</b>. 20 — возможно, но потребует идеального сна и питания.</p>
+    <p>Не расстраивайся, если выйдешь на 15 — это уже <b>×7 от старта</b>.</p>
+  </div></details>
+
+  <details class="acc"><summary>📚 Словарик методов <span class="arr">▼</span></summary><div class="accbody txt">
+    <ul>
+      <li><b>Негативы</b> — запрыгиваешь наверх (подбородок над перекладиной) и опускаешься максимально медленно 5–8 секунд</li>
+      <li><b>Австралийские</b> — низкий турник/стол, ноги на земле, тянешь грудь к перекладине под углом</li>
+      <li><b>GTG (Grease the Groove)</b> — много лёгких подходов в течение дня, не до отказа: тренирует нервную систему без утомления мышц</li>
+      <li><b>Пирамида</b> — повторы растут и падают: 1-2-3-4-5-4-3-2-1; отдых = повторы следующего подхода в минутах</li>
+      <li><b>Кластеры</b> — тяжёлый сет, разбитый на мини-подходы: 3 → 20 сек → 3 → 20 сек → 3</li>
+      <li><b>Взрывные</b> — максимально быстрый подъём (грудь к перекладине), медленное опускание</li>
+    </ul>
+  </div></details>`;
+}
+
+/* =====================================================================
+   РОУТЕР
+===================================================================== */
+function render(){
+  headerInfo();
+  if(activeTab==='today')renderToday();
+  else if(activeTab==='program')renderProgram();
+  else if(activeTab==='progress')renderProgress();
+  else renderRef();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.ntab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.ntab').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  activeTab=b.dataset.tab;
+  if(activeTab==='today')viewDate=todayStr();
+  render();
+});
+$('#btnSettings').onclick=settingsModal;
+document.addEventListener('touchstart',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();},{passive:true});
+
+if(!db){db=freshDB(todayStr(),2);render();onboarding();}
+else render();
+</script>
+</body>
+</html>
